@@ -841,6 +841,12 @@
             border: 1px solid #c3e6cb;
         }
         
+        .status-message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
         /* Admin Section */
         .admin-section {
             padding: 60px 0;
@@ -982,6 +988,24 @@
         
         .approve-btn:hover {
             background: #218838;
+        }
+        
+        /* Email Notification */
+        .email-notification {
+            background: var(--light);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--admin);
+        }
+        
+        .email-notification h4 {
+            margin-bottom: 10px;
+            color: var(--admin);
+        }
+        
+        .email-notification p {
+            margin-bottom: 5px;
         }
         
         /* Seller Section */
@@ -1305,6 +1329,42 @@
             background: #218838;
         }
         
+        /* Email Template Modal */
+        .email-template {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .email-template h4 {
+            margin-bottom: 15px;
+            color: var(--secondary);
+        }
+        
+        .email-template .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .email-template textarea {
+            min-height: 150px;
+            font-family: inherit;
+        }
+        
+        .email-template .email-preview {
+            background: var(--light);
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        
+        .email-template .email-preview h5 {
+            margin-bottom: 10px;
+            color: var(--secondary);
+        }
+        
         /* Footer */
         footer {
             background: var(--secondary);
@@ -1413,6 +1473,10 @@
             background: #dc3545;
         }
         
+        .notification.info {
+            background: #17a2b8;
+        }
+        
         /* Loading spinner */
         .loading {
             display: flex;
@@ -1432,6 +1496,30 @@
         
         @keyframes spin {
             to { transform: rotate(360deg); }
+        }
+        
+        /* API Status Indicator */
+        .api-status {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: var(--admin);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 1000;
+        }
+        
+        .api-status.offline {
+            background: #dc3545;
+        }
+        
+        .api-status i {
+            font-size: 1rem;
         }
         
         /* Responsive */
@@ -1566,6 +1654,13 @@
             .admin-actions,
             .seller-actions {
                 flex-direction: column;
+            }
+            
+            .api-status {
+                bottom: 10px;
+                left: 10px;
+                font-size: 0.8rem;
+                padding: 8px 12px;
             }
         }
     </style>
@@ -1830,6 +1925,7 @@
                     <div class="admin-tab" data-tab="sellers">Manage Sellers</div>
                     <div class="admin-tab" data-tab="products">Manage Products</div>
                     <div class="admin-tab" data-tab="website">Edit Website</div>
+                    <div class="admin-tab" data-tab="emails">Email Templates</div>
                 </div>
                 <div class="admin-content active" id="admin-dashboard">
                     <h3>Dashboard Overview</h3>
@@ -1859,6 +1955,10 @@
                                         <td>Total Orders</td>
                                         <td id="total-orders">0</td>
                                     </tr>
+                                    <tr>
+                                        <td>Pending Approvals</td>
+                                        <td id="pending-approvals">0</td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
@@ -1868,6 +1968,7 @@
                     <h3>Manage Sellers</h3>
                     <div class="admin-actions">
                         <button class="admin-btn" id="add-seller-btn-2">Add New Seller</button>
+                        <button class="admin-btn secondary" id="export-sellers-btn">Export Sellers</button>
                     </div>
                     <div class="admin-table">
                         <table>
@@ -1879,6 +1980,7 @@
                                     <th>Phone</th>
                                     <th>Products</th>
                                     <th>Status</th>
+                                    <th>Registered</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -1892,6 +1994,7 @@
                     <h3>Manage Products</h3>
                     <div class="admin-actions">
                         <button class="admin-btn" id="add-product-btn">Add New Product</button>
+                        <button class="admin-btn secondary" id="export-products-btn">Export Products</button>
                     </div>
                     <div class="admin-table">
                         <table>
@@ -1903,6 +2006,7 @@
                                     <th>Category</th>
                                     <th>Price (KES)</th>
                                     <th>Seller</th>
+                                    <th>Added</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -1945,6 +2049,64 @@
                         <button class="admin-btn" id="save-website-btn">Save Changes</button>
                     </div>
                 </div>
+                <div class="admin-content" id="admin-emails">
+                    <h3>Email Templates</h3>
+                    <div class="email-template">
+                        <h4>Seller Approval Email</h4>
+                        <div class="form-group">
+                            <label for="approval-email-subject">Subject</label>
+                            <input type="text" id="approval-email-subject" value="Your RBM Seller Account Has Been Approved">
+                        </div>
+                        <div class="form-group">
+                            <label for="approval-email-body">Email Body</label>
+                            <textarea id="approval-email-body">Dear {seller_name},
+
+We are pleased to inform you that your RBM seller account has been approved.
+
+You can now log in to your account and start adding products to our marketplace.
+
+Thank you for joining the RBM family!
+
+Best regards,
+RBM Team</textarea>
+                        </div>
+                        <div class="email-preview">
+                            <h5>Preview:</h5>
+                            <div id="approval-email-preview"></div>
+                        </div>
+                        <button class="admin-btn" id="save-approval-email">Save Template</button>
+                    </div>
+                    
+                    <div class="email-template">
+                        <h4>Seller Rejection Email</h4>
+                        <div class="form-group">
+                            <label for="rejection-email-subject">Subject</label>
+                            <input type="text" id="rejection-email-subject" value="Regarding Your RBM Seller Application">
+                        </div>
+                        <div class="form-group">
+                            <label for="rejection-email-body">Email Body</label>
+                            <textarea id="rejection-email-body">Dear {seller_name},
+
+Thank you for your interest in becoming a seller on RBM.
+
+After careful review of your application, we regret to inform you that we are unable to approve your seller account at this time.
+
+{rejection_reason}
+
+You may reapply after 30 days if you believe there has been a mistake or if your circumstances have changed.
+
+Thank you for your understanding.
+
+Best regards,
+RBM Team</textarea>
+                        </div>
+                        <div class="email-preview">
+                            <h5>Preview:</h5>
+                            <div id="rejection-email-preview"></div>
+                        </div>
+                        <button class="admin-btn" id="save-rejection-email">Save Template</button>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -1963,6 +2125,7 @@
                     <div class="seller-tab active" data-tab="dashboard">Dashboard</div>
                     <div class="seller-tab" data-tab="products">My Products</div>
                     <div class="seller-tab" data-tab="add-product">Add Product</div>
+                    <div class="seller-tab" data-tab="profile">My Profile</div>
                 </div>
                 <div class="seller-content active" id="seller-dashboard">
                     <h3>Seller Dashboard</h3>
@@ -1987,14 +2150,29 @@
                                     <td>Total Sales</td>
                                     <td id="seller-total-sales">0</td>
                                 </tr>
+                                <tr>
+                                    <td>Account Status</td>
+                                    <td id="seller-account-status">Pending Approval</td>
+                                </tr>
+                                <tr>
+                                    <td>Member Since</td>
+                                    <td id="seller-member-since">-</td>
+                                </tr>
                             </tbody>
                         </table>
+                    </div>
+                    <div id="seller-status-message" class="email-notification" style="display: none;">
+                        <h4>Account Status</h4>
+                        <p>Your account is currently pending approval by our admin team.</p>
+                        <p>You will receive an email notification once your account has been reviewed.</p>
+                        <p>Thank you for your patience!</p>
                     </div>
                 </div>
                 <div class="seller-content" id="seller-products">
                     <h3>My Products</h3>
                     <div class="seller-actions">
                         <button class="seller-btn" id="seller-add-product-btn-2">Add New Product</button>
+                        <button class="seller-btn secondary" id="seller-export-products-btn">Export Products</button>
                     </div>
                     <div class="admin-table">
                         <table>
@@ -2005,6 +2183,7 @@
                                     <th>Name</th>
                                     <th>Category</th>
                                     <th>Price (KES)</th>
+                                    <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -2074,6 +2253,40 @@
                             </div>
                         </div>
                         <button type="button" class="seller-btn" id="save-product-btn">Save Product</button>
+                    </div>
+                </div>
+                <div class="seller-content" id="seller-profile">
+                    <h3>My Profile</h3>
+                    <div class="product-form">
+                        <div class="form-group">
+                            <label for="profile-name">Full Name</label>
+                            <input type="text" id="profile-name" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="profile-email">Email</label>
+                            <input type="email" id="profile-email" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="profile-phone">Phone</label>
+                            <input type="tel" id="profile-phone" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="profile-status">Account Status</label>
+                            <input type="text" id="profile-status" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="profile-member-since">Member Since</label>
+                            <input type="text" id="profile-member-since" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="profile-password">Change Password</label>
+                            <input type="password" id="profile-password" placeholder="Enter new password">
+                        </div>
+                        <div class="form-group">
+                            <label for="profile-confirm-password">Confirm New Password</label>
+                            <input type="password" id="profile-confirm-password" placeholder="Confirm new password">
+                        </div>
+                        <button type="button" class="seller-btn" id="update-profile-btn">Update Profile</button>
                     </div>
                 </div>
             </div>
@@ -2233,401 +2446,641 @@
         </div>
     </div>
 
+    <!-- Send Email Modal -->
+    <div class="modal" id="send-email-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Send Email to Seller</h3>
+                <button class="modal-close" id="close-email-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="email-to">To</label>
+                    <input type="email" id="email-to" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="email-subject">Subject</label>
+                    <input type="text" id="email-subject" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="email-body">Message</label>
+                    <textarea id="email-body" readonly rows="10"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="email-reason">Rejection Reason (if rejecting)</label>
+                    <input type="text" id="email-reason" placeholder="Enter reason for rejection">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" id="cancel-email">Cancel</button>
+                <button class="btn-save" id="send-email-btn">Send Email</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Notification -->
     <div class="notification" id="notification">
         Item added to cart!
     </div>
 
-    <script>
-        // Sample product data with categories, descriptions, specifications, and sizes
-        const products = [
-            // Men's Shoes
-            {
-                id: 1,
-                name: "Urban Explorer",
-                price: 4500,
-                priceUSD: 35,
-                category: "men",
-                image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                images: [
-                    "https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                ],
-                description: "The Urban Explorer is designed for the modern man who values both style and comfort. These shoes feature a sleek design with premium materials that provide all-day comfort. Perfect for city walks, casual outings, and everyday wear.",
-                specifications: {
-                    "Material": "Genuine Leather",
-                    "Sole Type": "Rubber",
-                    "Closure": "Lace-up",
-                    "Heel Type": "Flat",
-                    "Toe Style": "Round",
-                    "Color": "Black/Brown"
-                },
-                sizes: ["7", "8", "9", "10", "11", "12"],
-                sellerId: null
-            },
-            {
-                id: 2,
-                name: "City Walker",
-                price: 3800,
-                priceUSD: 30,
-                category: "men",
-                image: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                images: [
-                    "https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                ],
-                description: "City Walker shoes are engineered for urban exploration. With their lightweight construction and breathable materials, they keep your feet comfortable during long walks through the city. The versatile design complements both casual and smart-casual outfits.",
-                specifications: {
-                    "Material": "Synthetic Leather",
-                    "Sole Type": "TPR",
-                    "Closure": "Slip-on",
-                    "Heel Type": "Flat",
-                    "Toe Style": "Round",
-                    "Color": "Gray/White"
-                },
-                sizes: ["7", "8", "9", "10", "11"],
-                sellerId: null
-            },
-            {
-                id: 3,
-                name: "Heritage Runner",
-                price: 5200,
-                priceUSD: 40,
-                category: "men",
-                image: "https://images.unsplash.com/photo-1562183241-b937e955a905?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                images: [
-                    "https://images.unsplash.com/photo-1562183241-b937e955a905?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1562183241-b937e955a905?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1562183241-b937e955a905?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                ],
-                description: "Inspired by classic running shoes, the Heritage Runner combines retro aesthetics with modern comfort technology. These shoes feature a cushioned midsole and supportive upper, making them perfect for both athletic activities and casual wear.",
-                specifications: {
-                    "Material": "Mesh & Synthetic",
-                    "Sole Type": "EVA Foam",
-                    "Closure": "Lace-up",
-                    "Heel Type": "Low",
-                    "Toe Style": "Round",
-                    "Color": "Blue/White"
-                },
-                sizes: ["8", "9", "10", "11", "12"],
-                sellerId: null
-            },
-            {
-                id: 4,
-                name: "Culture Classic",
-                price: 4200,
-                priceUSD: 33,
-                category: "men",
-                image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                images: [
-                    "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                ],
-                description: "The Culture Classic celebrates traditional craftsmanship with a contemporary twist. These shoes feature hand-stitched details and premium materials that reflect our cultural heritage while providing modern comfort and durability.",
-                specifications: {
-                    "Material": "Full Grain Leather",
-                    "Sole Type": "Leather",
-                    "Closure": "Lace-up",
-                    "Heel Type": "Low",
-                    "Toe Style": "Round",
-                    "Color": "Brown/Tan"
-                },
-                sizes: ["7", "8", "9", "10", "11"],
-                sellerId: null
-            },
-            {
-                id: 5,
-                name: "Street Style",
-                price: 4900,
-                priceUSD: 38,
-                category: "men",
-                image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                images: [
-                    "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                ],
-                description: "Make a statement with Street Style shoes. Designed for the fashion-forward individual, these shoes feature bold design elements and premium materials that stand out in any urban setting. Perfect for those who want to express their unique style.",
-                specifications: {
-                    "Material": "Suede & Leather",
-                    "Sole Type": "Rubber",
-                    "Closure": "Lace-up",
-                    "Heel Type": "Low",
-                    "Toe Style": "Round",
-                    "Color": "Black/Red"
-                },
-                sizes: ["8", "9", "10", "11", "12"],
-                sellerId: null
-            },
-            
-            // Women's Shoes
-            {
-                id: 6,
-                name: "Urban Nomad",
-                price: 5500,
-                priceUSD: 42,
-                category: "women",
-                image: "https://images.unsplash.com/photo-1607522370275-f142068729ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                images: [
-                    "https://images.unsplash.com/photo-1607522370275-f142068729ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1607522370275-f142068729ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1607522370275-f142068729ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                ],
-                description: "Urban Nomad shoes are designed for the modern woman on the go. These versatile shoes combine comfort and style, making them perfect for everything from city exploration to casual outings. The sleek design complements any outfit.",
-                specifications: {
-                    "Material": "Synthetic Leather",
-                    "Sole Type": "Rubber",
-                    "Closure": "Slip-on",
-                    "Heel Type": "Low",
-                    "Toe Style": "Pointed",
-                    "Color": "Black/White"
-                },
-                sizes: ["5", "6", "7", "8", "9", "10"],
-                sellerId: null
-            },
-            {
-                id: 7,
-                name: "Heritage High",
-                price: 4800,
-                priceUSD: 37,
-                category: "women",
-                image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                images: [
-                    "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                ],
-                description: "Heritage High heels celebrate traditional craftsmanship with a modern twist. These elegant shoes feature premium materials and hand-finished details that reflect our cultural heritage. Perfect for special occasions or adding sophistication to any outfit.",
-                specifications: {
-                    "Material": "Patent Leather",
-                    "Sole Type": "Leather",
-                    "Closure": "Buckle",
-                    "Heel Type": "High (3.5 inches)",
-                    "Toe Style": "Pointed",
-                    "Color": "Black"
-                },
-                sizes: ["5", "6", "7", "8", "9"],
-                sellerId: null
-            },
-            {
-                id: 8,
-                name: "City Cruiser",
-                price: 4100,
-                priceUSD: 32,
-                category: "women",
-                image: "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                images: [
-                    "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                ],
-                description: "City Cruiser flats are designed for all-day comfort without sacrificing style. These lightweight shoes feature a flexible sole and breathable materials, making them perfect for busy days. The versatile design pairs well with both casual and professional outfits.",
-                specifications: {
-                    "Material": "Canvas",
-                    "Sole Type": "Rubber",
-                    "Closure": "Slip-on",
-                    "Heel Type": "Flat",
-                    "Toe Style": "Round",
-                    "Color": "Navy/White"
-                },
-                sizes: ["5", "6", "7", "8", "9", "10"],
-                sellerId: null
-            },
-            {
-                id: 9,
-                name: "Culture Court",
-                price: 5300,
-                priceUSD: 41,
-                category: "women",
-                image: "https://images.unsplash.com/photo-1512374382143-06378e054fda?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                images: [
-                    "https://images.unsplash.com/photo-1512374382143-06378e054fda?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1512374382143-06378e054fda?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1512374382143-06378e054fda?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                ],
-                description: "Culture Court sneakers blend traditional design elements with modern comfort. These shoes feature unique patterns and premium materials that tell a story of cultural heritage. Perfect for those who appreciate artistry in their footwear.",
-                specifications: {
-                    "Material": "Canvas & Leather",
-                    "Sole Type": "Rubber",
-                    "Closure": "Lace-up",
-                    "Heel Type": "Low",
-                    "Toe Style": "Round",
-                    "Color": "Multi-color"
-                },
-                sizes: ["6", "7", "8", "9", "10"],
-                sellerId: null
-            },
-            {
-                id: 10,
-                name: "Urban Trail",
-                price: 4700,
-                priceUSD: 36,
-                category: "women",
-                image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                images: [
-                    "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                ],
-                description: "Urban Trail shoes are designed for the adventurous woman. These rugged yet stylish shoes feature a durable sole and weather-resistant materials, making them perfect for both urban exploration and light outdoor activities. The versatile design adapts to any environment.",
-                specifications: {
-                    "Material": "Synthetic & Mesh",
-                    "Sole Type": "Rubber",
-                    "Closure": "Lace-up",
-                    "Heel Type": "Low",
-                    "Toe Style": "Round",
-                    "Color": "Olive/Black"
-                },
-                sizes: ["6", "7", "8", "9", "10"],
-                sellerId: null
-            },
-            
-            // Official Shoes
-            {
-                id: 11,
-                name: "Executive Oxford",
-                price: 6800,
-                priceUSD: 52,
-                category: "official",
-                image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                images: [
-                    "https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                ],
-                description: "The Executive Oxford is the epitome of professional footwear. Crafted from premium leather with meticulous attention to detail, these shoes exude sophistication and confidence. Perfect for board meetings, formal events, and any professional setting.",
-                specifications: {
-                    "Material": "Full Grain Leather",
-                    "Sole Type": "Leather",
-                    "Closure": "Lace-up",
-                    "Heel Type": "Low",
-                    "Toe Style": "Cap Toe",
-                    "Color": "Black"
-                },
-                sizes: ["7", "8", "9", "10", "11", "12"],
-                sellerId: null
-            },
-            {
-                id: 12,
-                name: "Business Derby",
-                price: 7200,
-                priceUSD: 55,
-                category: "official",
-                image: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                images: [
-                    "https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                ],
-                description: "Business Derby shoes combine classic design with modern comfort. These shoes feature a sleek silhouette and premium materials that make a statement in any professional environment. The versatile design transitions seamlessly from the office to after-work engagements.",
-                specifications: {
-                    "Material": "Calfskin Leather",
-                    "Sole Type": "Leather & Rubber",
-                    "Closure": "Lace-up",
-                    "Heel Type": "Low",
-                    "Toe Style": "Plain Toe",
-                    "Color": "Brown"
-                },
-                sizes: ["7", "8", "9", "10", "11"],
-                sellerId: null
-            },
-            {
-                id: 13,
-                name: "Corporate Loafer",
-                price: 6500,
-                priceUSD: 50,
-                category: "official",
-                image: "https://images.unsplash.com/photo-1562183241-b937e955a905?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                images: [
-                    "https://images.unsplash.com/photo-1562183241-b937e955a905?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1562183241-b937e955a905?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1562183241-b937e955a905?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                ],
-                description: "Corporate Loafers offer the perfect blend of comfort and professionalism. These slip-on shoes feature premium materials and a sophisticated design that's ideal for busy professionals. The easy-to-wear style doesn't compromise on elegance or quality.",
-                specifications: {
-                    "Material": "Suede Leather",
-                    "Sole Type": "Leather",
-                    "Closure": "Slip-on",
-                    "Heel Type": "Low",
-                    "Toe Style": "Moc Toe",
-                    "Color": "Dark Brown"
-                },
-                sizes: ["7", "8", "9", "10", "11"],
-                sellerId: null
-            },
-            {
-                id: 14,
-                name: "Professional Monk",
-                price: 7500,
-                priceUSD: 58,
-                category: "official",
-                image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                images: [
-                    "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                ],
-                description: "The Professional Monk strap shoe is a distinctive choice for the modern professional. Featuring a classic design with a contemporary twist, these shoes showcase exceptional craftsmanship and attention to detail. Perfect for making a sophisticated statement.",
-                specifications: {
-                    "Material": "Full Grain Leather",
-                    "Sole Type": "Leather",
-                    "Closure": "Monk Strap",
-                    "Heel Type": "Low",
-                    "Toe Style": "Plain Toe",
-                    "Color": "Black"
-                },
-                sizes: ["8", "9", "10", "11", "12"],
-                sellerId: null
-            },
-            {
-                id: 15,
-                name: "Formal Brogue",
-                price: 8200,
-                priceUSD: 63,
-                category: "official",
-                image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                images: [
-                    "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                    "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                ],
-                description: "Formal Brogue shoes represent the pinnacle of traditional craftsmanship. These shoes feature intricate perforations and detailing that showcase the art of shoemaking. Perfect for formal occasions and professional settings where attention to detail matters.",
-                specifications: {
-                    "Material": "Full Grain Leather",
-                    "Sole Type": "Leather",
-                    "Closure": "Lace-up",
-                    "Heel Type": "Low",
-                    "Toe Style": "Wingtip",
-                    "Color": "Tan/Brown"
-                },
-                sizes: ["7", "8", "9", "10", "11"],
-                sellerId: null
-            }
-        ];
+    <!-- API Status Indicator -->
+    <div class="api-status" id="api-status">
+        <i class="fas fa-wifi"></i>
+        <span>Connected to Server</span>
+    </div>
 
-        // External product sources (simulated)
-        const externalSources = [
-            {
-                name: "Global Shoe Market",
-                url: "https://api.example.com/shoes",
-                products: [
+    <script>
+        // API Service - Simulated backend service
+        class APIService {
+            constructor() {
+                this.baseURL = 'https://api.rbmshoes.com';
+                this.token = localStorage.getItem('rbm_token') || null;
+                this.user = JSON.parse(localStorage.getItem('rbm_user')) || null;
+                
+                // Simulate network latency
+                this.latency = 300;
+                
+                // Initialize with sample data if not exists
+                this.initializeData();
+            }
+            
+            // Initialize data if not exists in localStorage
+            initializeData() {
+                if (!localStorage.getItem('rbm_products')) {
+                    localStorage.setItem('rbm_products', JSON.stringify(this.getSampleProducts()));
+                }
+                
+                if (!localStorage.getItem('rbm_sellers')) {
+                    localStorage.setItem('rbm_sellers', JSON.stringify(this.getSampleSellers()));
+                }
+                
+                if (!localStorage.getItem('rbm_website_content')) {
+                    localStorage.setItem('rbm_website_content', JSON.stringify(this.getSampleWebsiteContent()));
+                }
+                
+                if (!localStorage.getItem('rbm_email_templates')) {
+                    localStorage.setItem('rbm_email_templates', JSON.stringify(this.getSampleEmailTemplates()));
+                }
+            }
+            
+            // Simulate API call with latency
+            async simulateAPICall(endpoint, method = 'GET', data = null) {
+                return new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        try {
+                            // Simulate network error occasionally
+                            if (Math.random() < 0.05) { // 5% chance of network error
+                                throw new Error('Network error');
+                            }
+                            
+                            // Simulate different endpoints
+                            if (endpoint === '/auth/admin/login') {
+                                this.handleAdminLogin(data).then(resolve).catch(reject);
+                            } else if (endpoint === '/auth/seller/login') {
+                                this.handleSellerLogin(data).then(resolve).catch(reject);
+                            } else if (endpoint === '/auth/seller/register') {
+                                this.handleSellerRegister(data).then(resolve).catch(reject);
+                            } else if (endpoint === '/sellers') {
+                                this.handleSellersRequest(method, data).then(resolve).catch(reject);
+                            } else if (endpoint.startsWith('/sellers/')) {
+                                const sellerId = parseInt(endpoint.split('/')[2]);
+                                this.handleSellerRequest(sellerId, method, data).then(resolve).catch(reject);
+                            } else if (endpoint === '/products') {
+                                this.handleProductsRequest(method, data).then(resolve).catch(reject);
+                            } else if (endpoint.startsWith('/products/')) {
+                                const productId = parseInt(endpoint.split('/')[2]);
+                                this.handleProductRequest(productId, method, data).then(resolve).catch(reject);
+                            } else if (endpoint === '/website/content') {
+                                this.handleWebsiteContentRequest(method, data).then(resolve).catch(reject);
+                            } else if (endpoint === '/email/templates') {
+                                this.handleEmailTemplatesRequest(method, data).then(resolve).catch(reject);
+                            } else if (endpoint === '/email/send') {
+                                this.handleSendEmailRequest(data).then(resolve).catch(reject);
+                            } else {
+                                reject(new Error('Endpoint not found'));
+                            }
+                        } catch (error) {
+                            reject(error);
+                        }
+                    }, this.latency);
+                });
+            }
+            
+            // Authentication methods
+            async handleAdminLogin(data) {
+                const { username, password } = data;
+                
+                // In a real app, this would be a server-side validation
+                if (username === 'admin' && password === 'admin123') {
+                    const token = 'admin-token-' + Date.now();
+                    const user = {
+                        id: 1,
+                        username,
+                        role: 'admin',
+                        name: 'Administrator'
+                    };
+                    
+                    localStorage.setItem('rbm_token', token);
+                    localStorage.setItem('rbm_user', JSON.stringify(user));
+                    
+                    this.token = token;
+                    this.user = user;
+                    
+                    return {
+                        success: true,
+                        token,
+                        user
+                    };
+                } else {
+                    throw new Error('Invalid credentials');
+                }
+            }
+            
+            async handleSellerLogin(data) {
+                const { email, password } = data;
+                const sellers = JSON.parse(localStorage.getItem('rbm_sellers')) || [];
+                
+                // Find seller by email
+                const seller = sellers.find(s => s.email === email);
+                
+                if (seller && seller.password === password) {
+                    if (seller.status !== 'active') {
+                        throw new Error('Your account is not active. Please wait for admin approval.');
+                    }
+                    
+                    const token = 'seller-token-' + Date.now();
+                    const user = {
+                        id: seller.id,
+                        email: seller.email,
+                        role: 'seller',
+                        name: seller.name
+                    };
+                    
+                    localStorage.setItem('rbm_token', token);
+                    localStorage.setItem('rbm_user', JSON.stringify(user));
+                    
+                    this.token = token;
+                    this.user = user;
+                    
+                    return {
+                        success: true,
+                        token,
+                        user: {
+                            ...user,
+                            status: seller.status,
+                            registeredAt: seller.registeredAt
+                        }
+                    };
+                } else {
+                    throw new Error('Invalid email or password');
+                }
+            }
+            
+            async handleSellerRegister(data) {
+                const { name, email, phone, password } = data;
+                const sellers = JSON.parse(localStorage.getItem('rbm_sellers')) || [];
+                
+                // Check if email already exists
+                if (sellers.some(s => s.email === email)) {
+                    throw new Error('Email already registered');
+                }
+                
+                // Create new seller
+                const newSeller = {
+                    id: Date.now(),
+                    name,
+                    email,
+                    phone,
+                    password, // In a real app, this would be hashed
+                    status: 'pending',
+                    registeredAt: new Date().toISOString()
+                };
+                
+                sellers.push(newSeller);
+                localStorage.setItem('rbm_sellers', JSON.stringify(sellers));
+                
+                // In a real app, this would trigger an email notification to admin
+                this.notifyAdminOfNewSeller(newSeller);
+                
+                return {
+                    success: true,
+                    message: 'Registration successful. Please wait for admin approval.',
+                    seller: {
+                        id: newSeller.id,
+                        name: newSeller.name,
+                        email: newSeller.email,
+                        status: newSeller.status,
+                        registeredAt: newSeller.registeredAt
+                    }
+                };
+            }
+            
+            // Sellers management
+            async handleSellersRequest(method, data) {
+                const sellers = JSON.parse(localStorage.getItem('rbm_sellers')) || [];
+                
+                if (method === 'GET') {
+                    return {
+                        success: true,
+                        sellers: sellers.map(seller => ({
+                            id: seller.id,
+                            name: seller.name,
+                            email: seller.email,
+                            phone: seller.phone,
+                            status: seller.status,
+                            registeredAt: seller.registeredAt
+                        }))
+                    };
+                } else if (method === 'POST') {
+                    // Add new seller
+                    const { name, email, phone, password } = data;
+                    
+                    // Check if email already exists
+                    if (sellers.some(s => s.email === email)) {
+                        throw new Error('Email already registered');
+                    }
+                    
+                    // Create new seller
+                    const newSeller = {
+                        id: Date.now(),
+                        name,
+                        email,
+                        phone,
+                        password,
+                        status: 'active',
+                        registeredAt: new Date().toISOString()
+                    };
+                    
+                    sellers.push(newSeller);
+                    localStorage.setItem('rbm_sellers', JSON.stringify(sellers));
+                    
+                    return {
+                        success: true,
+                        seller: {
+                            id: newSeller.id,
+                            name: newSeller.name,
+                            email: newSeller.email,
+                            status: newSeller.status,
+                            registeredAt: newSeller.registeredAt
+                        }
+                    };
+                } else {
+                    throw new Error('Method not allowed');
+                }
+            }
+            
+            async handleSellerRequest(sellerId, method, data) {
+                const sellers = JSON.parse(localStorage.getItem('rbm_sellers')) || [];
+                const sellerIndex = sellers.findIndex(s => s.id === sellerId);
+                
+                if (sellerIndex === -1) {
+                    throw new Error('Seller not found');
+                }
+                
+                if (method === 'GET') {
+                    const seller = sellers[sellerIndex];
+                    return {
+                        success: true,
+                        seller: {
+                            id: seller.id,
+                            name: seller.name,
+                            email: seller.email,
+                            phone: seller.phone,
+                            status: seller.status,
+                            registeredAt: seller.registeredAt
+                        }
+                    };
+                } else if (method === 'PUT') {
+                    // Update seller
+                    const { name, email, phone, status, password } = data;
+                    
+                    sellers[sellerIndex] = {
+                        ...sellers[sellerIndex],
+                        name: name || sellers[sellerIndex].name,
+                        email: email || sellers[sellerIndex].email,
+                        phone: phone || sellers[sellerIndex].phone,
+                        status: status !== undefined ? status : sellers[sellerIndex].status,
+                        password: password || sellers[sellerIndex].password
+                    };
+                    
+                    localStorage.setItem('rbm_sellers', JSON.stringify(sellers));
+                    
+                    return {
+                        success: true,
+                        seller: {
+                            id: sellers[sellerIndex].id,
+                            name: sellers[sellerIndex].name,
+                            email: sellers[sellerIndex].email,
+                            phone: sellers[sellerIndex].phone,
+                            status: sellers[sellerIndex].status,
+                            registeredAt: sellers[sellerIndex].registeredAt
+                        }
+                    };
+                } else if (method === 'DELETE') {
+                    // Delete seller
+                    sellers.splice(sellerIndex, 1);
+                    localStorage.setItem('rbm_sellers', JSON.stringify(sellers));
+                    
+                    return {
+                        success: true,
+                        message: 'Seller deleted successfully'
+                    };
+                } else {
+                    throw new Error('Method not allowed');
+                }
+            }
+            
+            // Products management
+            async handleProductsRequest(method, data) {
+                const products = JSON.parse(localStorage.getItem('rbm_products')) || [];
+                
+                if (method === 'GET') {
+                    return {
+                        success: true,
+                        products: products
+                    };
+                } else if (method === 'POST') {
+                    // Add new product
+                    const { name, price, priceUSD, category, description, image, specifications, sizes, sellerId } = data;
+                    
+                    const newProduct = {
+                        id: Date.now(),
+                        name,
+                        price,
+                        priceUSD,
+                        category,
+                        description,
+                        image,
+                        images: [image],
+                        specifications,
+                        sizes,
+                        sellerId,
+                        createdAt: new Date().toISOString()
+                    };
+                    
+                    products.push(newProduct);
+                    localStorage.setItem('rbm_products', JSON.stringify(products));
+                    
+                    return {
+                        success: true,
+                        product: newProduct
+                    };
+                } else {
+                    throw new Error('Method not allowed');
+                }
+            }
+            
+            async handleProductRequest(productId, method, data) {
+                const products = JSON.parse(localStorage.getItem('rbm_products')) || [];
+                const productIndex = products.findIndex(p => p.id === productId);
+                
+                if (productIndex === -1) {
+                    throw new Error('Product not found');
+                }
+                
+                if (method === 'GET') {
+                    return {
+                        success: true,
+                        product: products[productIndex]
+                    };
+                } else if (method === 'PUT') {
+                    // Update product
+                    const { name, price, priceUSD, category, description, image, specifications, sizes } = data;
+                    
+                    products[productIndex] = {
+                        ...products[productIndex],
+                        name: name || products[productIndex].name,
+                        price: price !== undefined ? price : products[productIndex].price,
+                        priceUSD: priceUSD !== undefined ? priceUSD : products[productIndex].priceUSD,
+                        category: category || products[productIndex].category,
+                        description: description || products[productIndex].description,
+                        image: image || products[productIndex].image,
+                        specifications: specifications || products[productIndex].specifications,
+                        sizes: sizes || products[productIndex].sizes,
+                        updatedAt: new Date().toISOString()
+                    };
+                    
+                    localStorage.setItem('rbm_products', JSON.stringify(products));
+                    
+                    return {
+                        success: true,
+                        product: products[productIndex]
+                    };
+                } else if (method === 'DELETE') {
+                    // Delete product
+                    products.splice(productIndex, 1);
+                    localStorage.setItem('rbm_products', JSON.stringify(products));
+                    
+                    return {
+                        success: true,
+                        message: 'Product deleted successfully'
+                    };
+                } else {
+                    throw new Error('Method not allowed');
+                }
+            }
+            
+            // Website content management
+            async handleWebsiteContentRequest(method, data) {
+                if (method === 'GET') {
+                    const content = JSON.parse(localStorage.getItem('rbm_website_content')) || {};
+                    return {
+                        success: true,
+                        content
+                    };
+                } else if (method === 'PUT') {
+                    localStorage.setItem('rbm_website_content', JSON.stringify(data));
+                    return {
+                        success: true,
+                        message: 'Website content updated successfully'
+                    };
+                } else {
+                    throw new Error('Method not allowed');
+                }
+            }
+            
+            // Email templates management
+            async handleEmailTemplatesRequest(method, data) {
+                if (method === 'GET') {
+                    const templates = JSON.parse(localStorage.getItem('rbm_email_templates')) || {};
+                    return {
+                        success: true,
+                        templates
+                    };
+                } else if (method === 'PUT') {
+                    localStorage.setItem('rbm_email_templates', JSON.stringify(data));
+                    return {
+                        success: true,
+                        message: 'Email templates updated successfully'
+                    };
+                } else {
+                    throw new Error('Method not allowed');
+                }
+            }
+            
+            // Send email
+            async handleSendEmailRequest(data) {
+                const { to, subject, body, type, sellerName, rejectionReason } = data;
+                
+                // In a real app, this would actually send an email
+                // For now, we'll just simulate it
+                
+                // Log the email for demonstration
+                const emailLog = JSON.parse(localStorage.getItem('rbm_email_log')) || [];
+                emailLog.push({
+                    to,
+                    subject,
+                    body,
+                    type,
+                    sellerName,
+                    rejectionReason,
+                    sentAt: new Date().toISOString()
+                });
+                
+                localStorage.setItem('rbm_email_log', JSON.stringify(emailLog));
+                
+                return {
+                    success: true,
+                    message: 'Email sent successfully'
+                };
+            }
+            
+            // Notify admin of new seller (simulated)
+            notifyAdminOfNewSeller(seller) {
+                // In a real app, this would send an email to the admin
+                console.log(`New seller registration: ${seller.name} (${seller.email})`);
+                
+                // For demonstration, we'll just store a notification
+                const notifications = JSON.parse(localStorage.getItem('rbm_admin_notifications')) || [];
+                notifications.push({
+                    type: 'new_seller',
+                    message: `New seller registration: ${seller.name}`,
+                    sellerId: seller.id,
+                    createdAt: new Date().toISOString(),
+                    read: false
+                });
+                
+                localStorage.setItem('rbm_admin_notifications', JSON.stringify(notifications));
+            }
+            
+            // Get sample data
+            getSampleProducts() {
+                return [
                     {
-                        id: 101,
-                        name: "Global Runner Pro",
-                        price: 6500,
-                        priceUSD: 50,
+                        id: 1,
+                        name: "Urban Explorer",
+                        price: 4500,
+                        priceUSD: 35,
                         category: "men",
-                        image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                        image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
                         images: [
-                            "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                            "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                            "https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                            "https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                            "https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
                         ],
-                        description: "The Global Runner Pro is engineered for performance and style. These shoes feature advanced cushioning technology and a breathable upper that keeps your feet comfortable during long runs or busy days.",
+                        description: "The Urban Explorer is designed for the modern man who values both style and comfort. These shoes feature a sleek design with premium materials that provide all-day comfort. Perfect for city walks, casual outings, and everyday wear.",
+                        specifications: {
+                            "Material": "Genuine Leather",
+                            "Sole Type": "Rubber",
+                            "Closure": "Lace-up",
+                            "Heel Type": "Flat",
+                            "Toe Style": "Round",
+                            "Color": "Black/Brown"
+                        },
+                        sizes: ["7", "8", "9", "10", "11", "12"],
+                        sellerId: null,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 2,
+                        name: "City Walker",
+                        price: 3800,
+                        priceUSD: 30,
+                        category: "men",
+                        image: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                        images: [
+                            "https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                            "https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                            "https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                        ],
+                        description: "City Walker shoes are engineered for urban exploration. With their lightweight construction and breathable materials, they keep your feet comfortable during long walks through the city. The versatile design complements both casual and smart-casual outfits.",
+                        specifications: {
+                            "Material": "Synthetic Leather",
+                            "Sole Type": "TPR",
+                            "Closure": "Slip-on",
+                            "Heel Type": "Flat",
+                            "Toe Style": "Round",
+                            "Color": "Gray/White"
+                        },
+                        sizes: ["7", "8", "9", "10", "11"],
+                        sellerId: null,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 3,
+                        name: "Heritage Runner",
+                        price: 5200,
+                        priceUSD: 40,
+                        category: "men",
+                        image: "https://images.unsplash.com/photo-1562183241-b937e955a905?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                        images: [
+                            "https://images.unsplash.com/photo-1562183241-b937e955a905?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                            "https://images.unsplash.com/photo-1562183241-b937e955a905?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                            "https://images.unsplash.com/photo-1562183241-b937e955a905?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                        ],
+                        description: "Inspired by classic running shoes, the Heritage Runner combines retro aesthetics with modern comfort technology. These shoes feature a cushioned midsole and supportive upper, making them perfect for both athletic activities and casual wear.",
                         specifications: {
                             "Material": "Mesh & Synthetic",
+                            "Sole Type": "EVA Foam",
+                            "Closure": "Lace-up",
+                            "Heel Type": "Low",
+                            "Toe Style": "Round",
+                            "Color": "Blue/White"
+                        },
+                        sizes: ["8", "9", "10", "11", "12"],
+                        sellerId: null,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 4,
+                        name: "Culture Classic",
+                        price: 4200,
+                        priceUSD: 33,
+                        category: "men",
+                        image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                        images: [
+                            "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                            "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                            "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                        ],
+                        description: "The Culture Classic celebrates traditional craftsmanship with a contemporary twist. These shoes feature hand-stitched details and premium materials that reflect our cultural heritage while providing modern comfort and durability.",
+                        specifications: {
+                            "Material": "Full Grain Leather",
+                            "Sole Type": "Leather",
+                            "Closure": "Lace-up",
+                            "Heel Type": "Low",
+                            "Toe Style": "Round",
+                            "Color": "Brown/Tan"
+                        },
+                        sizes: ["7", "8", "9", "10", "11"],
+                        sellerId: null,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 5,
+                        name: "Street Style",
+                        price: 4900,
+                        priceUSD: 38,
+                        category: "men",
+                        image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                        images: [
+                            "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                            "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                            "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                        ],
+                        description: "Make a statement with Street Style shoes. Designed for the fashion-forward individual, these shoes feature bold design elements and premium materials that stand out in any urban setting. Perfect for those who want to express their unique style.",
+                        specifications: {
+                            "Material": "Suede & Leather",
                             "Sole Type": "Rubber",
                             "Closure": "Lace-up",
                             "Heel Type": "Low",
@@ -2635,150 +3088,489 @@
                             "Color": "Black/Red"
                         },
                         sizes: ["8", "9", "10", "11", "12"],
-                        sellerId: null
+                        sellerId: null,
+                        createdAt: new Date().toISOString()
                     },
+                    
+                    // Women's Shoes
                     {
-                        id: 102,
-                        name: "International Walker",
-                        price: 5800,
-                        priceUSD: 45,
-                        category: "men",
-                        image: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                        images: [
-                            "https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
-                            "https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                        ],
-                        description: "International Walker shoes are designed for global travelers. These versatile shoes feature a comfortable fit and durable construction that can handle any terrain. Perfect for business trips or vacations.",
-                        specifications: {
-                            "Material": "Leather & Synthetic",
-                            "Sole Type": "Rubber",
-                            "Closure": "Lace-up",
-                            "Heel Type": "Low",
-                            "Toe Style": "Round",
-                            "Color": "Brown/Tan"
-                        },
-                        sizes: ["7", "8", "9", "10", "11"],
-                        sellerId: null
-                    },
-                    {
-                        id: 103,
-                        name: "Elegant Heel",
-                        price: 6200,
-                        priceUSD: 48,
+                        id: 6,
+                        name: "Urban Nomad",
+                        price: 5500,
+                        priceUSD: 42,
                         category: "women",
                         image: "https://images.unsplash.com/photo-1607522370275-f142068729ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
                         images: [
                             "https://images.unsplash.com/photo-1607522370275-f142068729ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                            "https://images.unsplash.com/photo-1607522370275-f142068729ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
                             "https://images.unsplash.com/photo-1607522370275-f142068729ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
                         ],
-                        description: "Elegant Heel shoes are designed for special occasions. These sophisticated shoes feature a sleek design and premium materials that add a touch of glamour to any outfit. Perfect for weddings, parties, and formal events.",
+                        description: "Urban Nomad shoes are designed for the modern woman on the go. These versatile shoes combine comfort and style, making them perfect for everything from city exploration to casual outings. The sleek design complements any outfit.",
                         specifications: {
-                            "Material": "Satin",
-                            "Sole Type": "Leather",
-                            "Closure": "Ankle Strap",
-                            "Heel Type": "High (4 inches)",
+                            "Material": "Synthetic Leather",
+                            "Sole Type": "Rubber",
+                            "Closure": "Slip-on",
+                            "Heel Type": "Low",
                             "Toe Style": "Pointed",
-                            "Color": "Silver"
+                            "Color": "Black/White"
+                        },
+                        sizes: ["5", "6", "7", "8", "9", "10"],
+                        sellerId: null,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 7,
+                        name: "Heritage High",
+                        price: 4800,
+                        priceUSD: 37,
+                        category: "women",
+                        image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                        images: [
+                            "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                            "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                            "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                        ],
+                        description: "Heritage High heels celebrate traditional craftsmanship with a modern twist. These elegant shoes feature premium materials and hand-finished details that reflect our cultural heritage. Perfect for special occasions or adding sophistication to any outfit.",
+                        specifications: {
+                            "Material": "Patent Leather",
+                            "Sole Type": "Leather",
+                            "Closure": "Buckle",
+                            "Heel Type": "High (3.5 inches)",
+                            "Toe Style": "Pointed",
+                            "Color": "Black"
                         },
                         sizes: ["5", "6", "7", "8", "9"],
-                        sellerId: null
-                    }
-                ]
-            },
-            {
-                name: "Premium Footwear Collection",
-                url: "https://api.example.com/premium-shoes",
-                products: [
+                        sellerId: null,
+                        createdAt: new Date().toISOString()
+                    },
                     {
-                        id: 201,
-                        name: "Premium Heritage",
+                        id: 8,
+                        name: "City Cruiser",
+                        price: 4100,
+                        priceUSD: 32,
+                        category: "women",
+                        image: "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                        images: [
+                            "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                            "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                            "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                        ],
+                        description: "City Cruiser flats are designed for all-day comfort without sacrificing style. These lightweight shoes feature a flexible sole and breathable materials, making them perfect for busy days. The versatile design pairs well with both casual and professional outfits.",
+                        specifications: {
+                            "Material": "Canvas",
+                            "Sole Type": "Rubber",
+                            "Closure": "Slip-on",
+                            "Heel Type": "Flat",
+                            "Toe Style": "Round",
+                            "Color": "Navy/White"
+                        },
+                        sizes: ["5", "6", "7", "8", "9", "10"],
+                        sellerId: null,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 9,
+                        name: "Culture Court",
+                        price: 5300,
+                        priceUSD: 41,
+                        category: "women",
+                        image: "https://images.unsplash.com/photo-1512374382143-06378e054fda?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                        images: [
+                            "https://images.unsplash.com/photo-1512374382143-06378e054fda?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                            "https://images.unsplash.com/photo-1512374382143-06378e054fda?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                            "https://images.unsplash.com/photo-1512374382143-06378e054fda?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                        ],
+                        description: "Culture Court sneakers blend traditional design elements with modern comfort. These shoes feature unique patterns and premium materials that tell a story of cultural heritage. Perfect for those who appreciate artistry in their footwear.",
+                        specifications: {
+                            "Material": "Canvas & Leather",
+                            "Sole Type": "Rubber",
+                            "Closure": "Lace-up",
+                            "Heel Type": "Low",
+                            "Toe Style": "Round",
+                            "Color": "Multi-color"
+                        },
+                        sizes: ["6", "7", "8", "9", "10"],
+                        sellerId: null,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 10,
+                        name: "Urban Trail",
+                        price: 4700,
+                        priceUSD: 36,
+                        category: "women",
+                        image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                        images: [
+                            "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                            "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                            "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                        ],
+                        description: "Urban Trail shoes are designed for the adventurous woman. These rugged yet stylish shoes feature a durable sole and weather-resistant materials, making them perfect for both urban exploration and light outdoor activities. The versatile design adapts to any environment.",
+                        specifications: {
+                            "Material": "Synthetic & Mesh",
+                            "Sole Type": "Rubber",
+                            "Closure": "Lace-up",
+                            "Heel Type": "Low",
+                            "Toe Style": "Round",
+                            "Color": "Olive/Black"
+                        },
+                        sizes: ["6", "7", "8", "9", "10"],
+                        sellerId: null,
+                        createdAt: new Date().toISOString()
+                    },
+                    
+                    // Official Shoes
+                    {
+                        id: 11,
+                        name: "Executive Oxford",
+                        price: 6800,
+                        priceUSD: 52,
+                        category: "official",
+                        image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                        images: [
+                            "https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                            "https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                            "https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                        ],
+                        description: "The Executive Oxford is the epitome of professional footwear. Crafted from premium leather with meticulous attention to detail, these shoes exude sophistication and confidence. Perfect for board meetings, formal events, and any professional setting.",
+                        specifications: {
+                            "Material": "Full Grain Leather",
+                            "Sole Type": "Leather",
+                            "Closure": "Lace-up",
+                            "Heel Type": "Low",
+                            "Toe Style": "Cap Toe",
+                            "Color": "Black"
+                        },
+                        sizes: ["7", "8", "9", "10", "11", "12"],
+                        sellerId: null,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 12,
+                        name: "Business Derby",
                         price: 7200,
                         priceUSD: 55,
+                        category: "official",
+                        image: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                        images: [
+                            "https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                            "https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                            "https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                        ],
+                        description: "Business Derby shoes combine classic design with modern comfort. These shoes feature a sleek silhouette and premium materials that make a statement in any professional environment. The versatile design transitions seamlessly from the office to after-work engagements.",
+                        specifications: {
+                            "Material": "Calfskin Leather",
+                            "Sole Type": "Leather & Rubber",
+                            "Closure": "Lace-up",
+                            "Heel Type": "Low",
+                            "Toe Style": "Plain Toe",
+                            "Color": "Brown"
+                        },
+                        sizes: ["7", "8", "9", "10", "11"],
+                        sellerId: null,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 13,
+                        name: "Corporate Loafer",
+                        price: 6500,
+                        priceUSD: 50,
+                        category: "official",
+                        image: "https://images.unsplash.com/photo-1562183241-b937e955a905?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                        images: [
+                            "https://images.unsplash.com/photo-1562183241-b937e955a905?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                            "https://images.unsplash.com/photo-1562183241-b937e955a905?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                            "https://images.unsplash.com/photo-1562183241-b937e955a905?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                        ],
+                        description: "Corporate Loafers offer the perfect blend of comfort and professionalism. These slip-on shoes feature premium materials and a sophisticated design that's ideal for busy professionals. The easy-to-wear style doesn't compromise on elegance or quality.",
+                        specifications: {
+                            "Material": "Suede Leather",
+                            "Sole Type": "Leather",
+                            "Closure": "Slip-on",
+                            "Heel Type": "Low",
+                            "Toe Style": "Moc Toe",
+                            "Color": "Dark Brown"
+                        },
+                        sizes: ["7", "8", "9", "10", "11"],
+                        sellerId: null,
+                        createdAt: new Date().toISOString()
+                    },
+                    {
+                        id: 14,
+                        name: "Professional Monk",
+                        price: 7500,
+                        priceUSD: 58,
                         category: "official",
                         image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
                         images: [
                             "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                            "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
                             "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
                         ],
-                        description: "Premium Heritage shoes represent the finest in shoemaking tradition. These handcrafted shoes feature premium materials and meticulous attention to detail that's unmatched in the industry. Perfect for those who appreciate true luxury.",
+                        description: "The Professional Monk strap shoe is a distinctive choice for the modern professional. Featuring a classic design with a contemporary twist, these shoes showcase exceptional craftsmanship and attention to detail. Perfect for making a sophisticated statement.",
                         specifications: {
-                            "Material": "Exotic Leather",
+                            "Material": "Full Grain Leather",
                             "Sole Type": "Leather",
-                            "Closure": "Lace-up",
+                            "Closure": "Monk Strap",
                             "Heel Type": "Low",
                             "Toe Style": "Plain Toe",
                             "Color": "Black"
                         },
                         sizes: ["8", "9", "10", "11", "12"],
-                        sellerId: null
+                        sellerId: null,
+                        createdAt: new Date().toISOString()
                     },
                     {
-                        id: 202,
-                        name: "Luxury Urban",
-                        price: 8500,
-                        priceUSD: 65,
-                        category: "women",
+                        id: 15,
+                        name: "Formal Brogue",
+                        price: 8200,
+                        priceUSD: 63,
+                        category: "official",
                         image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
                         images: [
                             "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                            "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
                             "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
                         ],
-                        description: "Luxury Urban sneakers combine high-fashion design with everyday comfort. These limited-edition shoes feature unique materials and exclusive design elements that make them a must-have for fashion enthusiasts.",
+                        description: "Formal Brogue shoes represent the pinnacle of traditional craftsmanship. These shoes feature intricate perforations and detailing that showcase the art of shoemaking. Perfect for formal occasions and professional settings where attention to detail matters.",
                         specifications: {
-                            "Material": "Premium Leather & Mesh",
-                            "Sole Type": "Rubber",
+                            "Material": "Full Grain Leather",
+                            "Sole Type": "Leather",
                             "Closure": "Lace-up",
                             "Heel Type": "Low",
-                            "Toe Style": "Round",
-                            "Color": "White/Gold"
+                            "Toe Style": "Wingtip",
+                            "Color": "Tan/Brown"
                         },
-                        sizes: ["6", "7", "8", "9", "10"],
-                        sellerId: null
+                        sizes: ["7", "8", "9", "10", "11"],
+                        sellerId: null,
+                        createdAt: new Date().toISOString()
                     }
-                ]
+                ];
             }
-        ];
-
-        // Sellers data
-        let sellers = [
-            {
-                id: 1,
-                name: "John Doe",
-                email: "john@example.com",
-                phone: "+1234567890",
-                status: "active",
-                password: "password123" // In a real app, this would be hashed
-            },
-            {
-                id: 2,
-                name: "Jane Smith",
-                email: "jane@example.com",
-                phone: "+1234567891",
-                status: "active",
-                password: "password123" // In a real app, this would be hashed
+            
+            getSampleSellers() {
+                return [
+                    {
+                        id: 1,
+                        name: "John Doe",
+                        email: "john@example.com",
+                        phone: "+1234567890",
+                        status: "active",
+                        password: "password123", // In a real app, this would be hashed
+                        registeredAt: new Date().toISOString()
+                    },
+                    {
+                        id: 2,
+                        name: "Jane Smith",
+                        email: "jane@example.com",
+                        phone: "+1234567891",
+                        status: "active",
+                        password: "password123", // In a real app, this would be hashed
+                        registeredAt: new Date().toISOString()
+                    }
+                ];
             }
-        ];
+            
+            getSampleWebsiteContent() {
+                return {
+                    heroTitle: "RBM Shoes",
+                    heroSubtitle: "Step Into Culture with our premium collection of footwear",
+                    heroBg: "https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80",
+                    footerAbout: "RBM Shoes is a premium footwear brand that combines style, comfort, and cultural heritage. Step into culture with our unique designs.",
+                    footerContact: "123 Culture Street, Nairobi, Kenya<br>Phone: +254 712 345 678<br>Email: info@rbmshoes.com"
+                };
+            }
+            
+            getSampleEmailTemplates() {
+                return {
+                    approval: {
+                        subject: "Your RBM Seller Account Has Been Approved",
+                        body: "Dear {seller_name},\n\nWe are pleased to inform you that your RBM seller account has been approved.\n\nYou can now log in to your account and start adding products to our marketplace.\n\nThank you for joining the RBM family!\n\nBest regards,\nRBM Team"
+                    },
+                    rejection: {
+                        subject: "Regarding Your RBM Seller Application",
+                        body: "Dear {seller_name},\n\nThank you for your interest in becoming a seller on RBM.\n\nAfter careful review of your application, we regret to inform you that we are unable to approve your seller account at this time.\n\n{rejection_reason}\n\nYou may reapply after 30 days if you believe there has been a mistake or if your circumstances have changed.\n\nThank you for your understanding.\n\nBest regards,\nRBM Team"
+                    }
+                };
+            }
+            
+            // Authentication methods
+            async login(username, password, role) {
+                try {
+                    if (role === 'admin') {
+                        const response = await this.simulateAPICall('/auth/admin/login', 'POST', { username, password });
+                        return response;
+                    } else if (role === 'seller') {
+                        const response = await this.simulateAPICall('/auth/seller/login', 'POST', { email: username, password });
+                        return response;
+                    } else {
+                        throw new Error('Invalid role');
+                    }
+                } catch (error) {
+                    throw error;
+                }
+            }
+            
+            async registerSeller(data) {
+                try {
+                    const response = await this.simulateAPICall('/auth/seller/register', 'POST', data);
+                    return response;
+                } catch (error) {
+                    throw error;
+                }
+            }
+            
+            logout() {
+                localStorage.removeItem('rbm_token');
+                localStorage.removeItem('rbm_user');
+                this.token = null;
+                this.user = null;
+            }
+            
+            // Seller management
+            async getSellers() {
+                try {
+                    const response = await this.simulateAPICall('/sellers', 'GET');
+                    return response;
+                } catch (error) {
+                    throw error;
+                }
+            }
+            
+            async getSeller(sellerId) {
+                try {
+                    const response = await this.simulateAPICall(`/sellers/${sellerId}`, 'GET');
+                    return response;
+                } catch (error) {
+                    throw error;
+                }
+            }
+            
+            async updateSeller(sellerId, data) {
+                try {
+                    const response = await this.simulateAPICall(`/sellers/${sellerId}`, 'PUT', data);
+                    return response;
+                } catch (error) {
+                    throw error;
+                }
+            }
+            
+            async deleteSeller(sellerId) {
+                try {
+                    const response = await this.simulateAPICall(`/sellers/${sellerId}`, 'DELETE');
+                    return response;
+                } catch (error) {
+                    throw error;
+                }
+            }
+            
+            // Product management
+            async getProducts() {
+                try {
+                    const response = await this.simulateAPICall('/products', 'GET');
+                    return response;
+                } catch (error) {
+                    throw error;
+                }
+            }
+            
+            async getProduct(productId) {
+                try {
+                    const response = await this.simulateAPICall(`/products/${productId}`, 'GET');
+                    return response;
+                } catch (error) {
+                    throw error;
+                }
+            }
+            
+            async addProduct(data) {
+                try {
+                    const response = await this.simulateAPICall('/products', 'POST', data);
+                    return response;
+                } catch (error) {
+                    throw error;
+                }
+            }
+            
+            async updateProduct(productId, data) {
+                try {
+                    const response = await this.simulateAPICall(`/products/${productId}`, 'PUT', data);
+                    return response;
+                } catch (error) {
+                    throw error;
+                }
+            }
+            
+            async deleteProduct(productId) {
+                try {
+                    const response = await this.simulateAPICall(`/products/${productId}`, 'DELETE');
+                    return response;
+                } catch (error) {
+                    throw error;
+                }
+            }
+            
+            // Website content management
+            async getWebsiteContent() {
+                try {
+                    const response = await this.simulateAPICall('/website/content', 'GET');
+                    return response;
+                } catch (error) {
+                    throw error;
+                }
+            }
+            
+            async updateWebsiteContent(data) {
+                try {
+                    const response = await this.simulateAPICall('/website/content', 'PUT', data);
+                    return response;
+                } catch (error) {
+                    throw error;
+                }
+            }
+            
+            // Email templates management
+            async getEmailTemplates() {
+                try {
+                    const response = await this.simulateAPICall('/email/templates', 'GET');
+                    return response;
+                } catch (error) {
+                    throw error;
+                }
+            }
+            
+            async updateEmailTemplates(data) {
+                try {
+                    const response = await this.simulateAPICall('/email/templates', 'PUT', data);
+                    return response;
+                } catch (error) {
+                    throw error;
+                }
+            }
+            
+            // Send email
+            async sendEmail(data) {
+                try {
+                    const response = await this.simulateAPICall('/email/send', 'POST', data);
+                    return response;
+                } catch (error) {
+                    throw error;
+                }
+            }
+            
+            // Check if user is authenticated
+            isAuthenticated() {
+                return this.token !== null && this.user !== null;
+            }
+            
+            // Check if user has role
+            hasRole(role) {
+                return this.isAuthenticated() && this.user.role === role;
+            }
+        }
 
-        // Admin credentials
-        const adminCredentials = {
-            username: "admin",
-            password: "admin123"
-        };
-
-        // Cart functionality
-        let cart = [];
-        let allProducts = [...products];
-        let currentSection = 'home';
-        let activeCategory = 'all';
-        let selectedSize = null;
-        let currentProduct = null;
-        let currentUser = null;
-        let userRole = null;
-        let nextProductId = 1000;
-        let nextSellerId = 100;
-        let productImages = [];
-        let productSpecs = {};
-        let heroBackgroundImage = 'https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80';
+        // Initialize API service
+        const apiService = new APIService();
 
         // DOM elements
         const productGrid = document.getElementById('product-grid');
@@ -2819,6 +3611,7 @@
         const sellersTableBody = document.getElementById('sellers-table-body');
         const productsTableBody = document.getElementById('products-table-body');
         const adminWelcome = document.getElementById('admin-welcome');
+        const pendingApprovals = document.getElementById('pending-approvals');
         
         // Seller elements
         const sellerSection = document.getElementById('seller-section');
@@ -2826,6 +3619,9 @@
         const sellerContents = document.querySelectorAll('.seller-content');
         const sellerProductsTableBody = document.getElementById('seller-products-table-body');
         const sellerWelcome = document.getElementById('seller-welcome');
+        const sellerAccountStatus = document.getElementById('seller-account-status');
+        const sellerMemberSince = document.getElementById('seller-member-since');
+        const sellerStatusMessage = document.getElementById('seller-status-message');
         
         // User menu elements
         const adminLoginLink = document.getElementById('admin-login-link');
@@ -2847,37 +3643,130 @@
         const footerContactInfo = document.getElementById('footer-contact-info');
         const footerContactInput = document.getElementById('footer-contact-input');
         
+        // Email template elements
+        const approvalEmailSubject = document.getElementById('approval-email-subject');
+        const approvalEmailBody = document.getElementById('approval-email-body');
+        const approvalEmailPreview = document.getElementById('approval-email-preview');
+        const rejectionEmailSubject = document.getElementById('rejection-email-subject');
+        const rejectionEmailBody = document.getElementById('rejection-email-body');
+        const rejectionEmailPreview = document.getElementById('rejection-email-preview');
+        const saveApprovalEmail = document.getElementById('save-approval-email');
+        const saveRejectionEmail = document.getElementById('save-rejection-email');
+        
         // Modal elements
         const editSellerModal = document.getElementById('edit-seller-modal');
         const editProductModal = document.getElementById('edit-product-modal');
+        const sendEmailModal = document.getElementById('send-email-modal');
         const closeSellerModal = document.getElementById('close-seller-modal');
         const closeProductModal = document.getElementById('close-product-modal');
+        const closeEmailModal = document.getElementById('close-email-modal');
         const cancelSellerEdit = document.getElementById('cancel-seller-edit');
         const cancelProductEdit = document.getElementById('cancel-product-edit');
+        const cancelEmail = document.getElementById('cancel-email');
         const saveSellerChanges = document.getElementById('save-seller-changes');
         const saveProductChanges = document.getElementById('save-product-changes');
+        const sendEmailBtn = document.getElementById('send-email-btn');
         const editSellerForm = document.getElementById('edit-seller-form');
         const editProductForm = document.getElementById('edit-product-form');
+        const emailTo = document.getElementById('email-to');
+        const emailSubject = document.getElementById('email-subject');
+        const emailBody = document.getElementById('email-body');
+        const emailReason = document.getElementById('email-reason');
+        
+        // API status indicator
+        const apiStatus = document.getElementById('api-status');
+        
+        // Global variables
+        let cart = [];
+        let allProducts = [];
+        let currentSection = 'home';
+        let activeCategory = 'all';
+        let selectedSize = null;
+        let currentProduct = null;
+        let productImages = [];
+        let productSpecs = {};
+        let heroBackgroundImage = 'https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80';
+        let currentSeller = null;
+        let emailTemplates = {};
 
         // Initialize the app
-        function init() {
-            // Load data from localStorage if available
-            loadDataFromStorage();
+        async function init() {
+            // Show loading state
+            showLoading();
             
-            // Apply hero background image
-            heroSection.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('${heroBackgroundImage}')`;
-            
-            renderProducts();
-            updateCartCount();
-            updateUserMenu();
-            
-            // Event listeners
-            cartIcon.addEventListener('click', showCart);
-            checkoutBtn.addEventListener('click', showCheckout);
-            checkoutForm.addEventListener('submit', placeOrder);
-            searchBar.addEventListener('input', searchProducts);
-            searchBtn.addEventListener('click', performSearch);
-            
+            try {
+                // Load data from API
+                await loadInitialData();
+                
+                // Apply hero background image
+                heroSection.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('${heroBackgroundImage}')`;
+                
+                // Update UI based on authentication status
+                updateUserMenu();
+                
+                // Render products
+                renderProducts();
+                updateCartCount();
+                
+                // Set up event listeners
+                setupEventListeners();
+                
+                // Update API status
+                updateApiStatus(true);
+            } catch (error) {
+                console.error('Initialization error:', error);
+                showNotification('Failed to initialize application. Please refresh the page.', 'error');
+                updateApiStatus(false);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Load initial data
+        async function loadInitialData() {
+            try {
+                // Load products
+                const productsResponse = await apiService.getProducts();
+                allProducts = productsResponse.products;
+                
+                // Load website content
+                const websiteResponse = await apiService.getWebsiteContent();
+                const websiteContent = websiteResponse.content;
+                
+                heroTitle.textContent = websiteContent.heroTitle || "RBM Shoes";
+                heroSubtitle.textContent = websiteContent.heroSubtitle || "Step Into Culture with our premium collection of footwear";
+                footerAboutText.textContent = websiteContent.footerAbout || "RBM Shoes is a premium footwear brand that combines style, comfort, and cultural heritage. Step into culture with our unique designs.";
+                footerContactInfo.innerHTML = websiteContent.footerContact || `
+                    <li><i class="fas fa-map-marker-alt"></i> 123 Culture Street, Nairobi, Kenya</li>
+                    <li><i class="fas fa-phone"></i> +254 712 345 678</li>
+                    <li><i class="fas fa-envelope"></i> info@rbmshoes.com</li>
+                `;
+                heroBackgroundImage = websiteContent.heroBg || heroBackgroundImage;
+                
+                // Load email templates
+                const templatesResponse = await apiService.getEmailTemplates();
+                emailTemplates = templatesResponse.templates;
+                
+                // Update email template fields
+                if (emailTemplates.approval) {
+                    approvalEmailSubject.value = emailTemplates.approval.subject;
+                    approvalEmailBody.value = emailTemplates.approval.body;
+                    updateEmailPreview('approval');
+                }
+                
+                if (emailTemplates.rejection) {
+                    rejectionEmailSubject.value = emailTemplates.rejection.subject;
+                    rejectionEmailBody.value = emailTemplates.rejection.body;
+                    updateEmailPreview('rejection');
+                }
+            } catch (error) {
+                console.error('Error loading initial data:', error);
+                throw error;
+            }
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
             // Navigation
             navLinks.forEach(link => {
                 link.addEventListener('click', (e) => {
@@ -3021,12 +3910,23 @@
             
             logoutLink.addEventListener('click', handleLogout);
             
+            // Cart functionality
+            cartIcon.addEventListener('click', showCart);
+            checkoutBtn.addEventListener('click', showCheckout);
+            checkoutForm.addEventListener('submit', placeOrder);
+            
+            // Search functionality
+            searchBar.addEventListener('input', searchProducts);
+            searchBtn.addEventListener('click', performSearch);
+            
             // Admin buttons
             document.getElementById('add-seller-btn').addEventListener('click', showAddSellerForm);
             document.getElementById('add-seller-btn-2').addEventListener('click', showAddSellerForm);
             document.getElementById('refresh-data-btn').addEventListener('click', loadAdminDashboard);
             document.getElementById('add-product-btn').addEventListener('click', showAddProductForm);
             document.getElementById('save-website-btn').addEventListener('click', saveWebsiteChanges);
+            document.getElementById('export-sellers-btn').addEventListener('click', exportSellers);
+            document.getElementById('export-products-btn').addEventListener('click', exportProducts);
             
             // Seller buttons
             document.getElementById('seller-add-product-btn').addEventListener('click', () => {
@@ -3052,6 +3952,8 @@
             });
             
             document.getElementById('seller-refresh-btn').addEventListener('click', loadSellerDashboard);
+            document.getElementById('seller-export-products-btn').addEventListener('click', exportSellerProducts);
+            document.getElementById('update-profile-btn').addEventListener('click', updateSellerProfile);
             
             // Product form
             document.getElementById('add-product-image-btn').addEventListener('click', () => {
@@ -3084,6 +3986,10 @@
                 editProductModal.classList.remove('active');
             });
             
+            closeEmailModal.addEventListener('click', () => {
+                sendEmailModal.classList.remove('active');
+            });
+            
             cancelSellerEdit.addEventListener('click', () => {
                 editSellerModal.classList.remove('active');
             });
@@ -3092,8 +3998,13 @@
                 editProductModal.classList.remove('active');
             });
             
+            cancelEmail.addEventListener('click', () => {
+                sendEmailModal.classList.remove('active');
+            });
+            
             saveSellerChanges.addEventListener('click', saveSellerEdit);
             saveProductChanges.addEventListener('click', saveProductEdit);
+            sendEmailBtn.addEventListener('click', sendEmailToSeller);
             
             // Hero background input
             heroBgInput.addEventListener('input', () => {
@@ -3105,65 +4016,85 @@
                 }
             });
             
+            // Email template inputs
+            approvalEmailSubject.addEventListener('input', () => updateEmailPreview('approval'));
+            approvalEmailBody.addEventListener('input', () => updateEmailPreview('approval'));
+            rejectionEmailSubject.addEventListener('input', () => updateEmailPreview('rejection'));
+            rejectionEmailBody.addEventListener('input', () => updateEmailPreview('rejection'));
+            
             // Add edit specification button
             document.getElementById('add-edit-spec-btn').addEventListener('click', addEditSpecificationRow);
+            
+            // Save email templates
+            saveApprovalEmail.addEventListener('click', () => saveEmailTemplate('approval'));
+            saveRejectionEmail.addEventListener('click', () => saveEmailTemplate('rejection'));
+            
+            // Simulate network status changes
+            setInterval(() => {
+                // Randomly toggle network status for demonstration
+                if (Math.random() < 0.1) { // 10% chance to toggle
+                    const isOnline = !apiStatus.classList.contains('offline');
+                    updateApiStatus(isOnline);
+                }
+            }, 10000); // Check every 10 seconds
         }
 
-        // Load data from localStorage
-        function loadDataFromStorage() {
-            const savedProducts = localStorage.getItem('rbmProducts');
-            if (savedProducts) {
-                allProducts = JSON.parse(savedProducts);
+        // Update API status indicator
+        function updateApiStatus(isOnline) {
+            if (isOnline) {
+                apiStatus.classList.remove('offline');
+                apiStatus.innerHTML = '<i class="fas fa-wifi"></i><span>Connected to Server</span>';
+            } else {
+                apiStatus.classList.add('offline');
+                apiStatus.innerHTML = '<i class="fas fa-wifi-slash"></i><span>Offline Mode</span>';
             }
-            
-            const savedSellers = localStorage.getItem('rbmSellers');
-            if (savedSellers) {
-                sellers = JSON.parse(savedSellers);
-            }
-            
-            const savedNextProductId = localStorage.getItem('rbmNextProductId');
-            if (savedNextProductId) {
-                nextProductId = parseInt(savedNextProductId);
-            }
-            
-            const savedNextSellerId = localStorage.getItem('rbmNextSellerId');
-            if (savedNextSellerId) {
-                nextSellerId = parseInt(savedNextSellerId);
-            }
-            
-            const savedWebsiteContent = localStorage.getItem('rbmWebsiteContent');
-            if (savedWebsiteContent) {
-                const websiteContent = JSON.parse(savedWebsiteContent);
-                heroTitle.textContent = websiteContent.heroTitle || "RBM Shoes";
-                heroSubtitle.textContent = websiteContent.heroSubtitle || "Step Into Culture with our premium collection of footwear";
-                footerAboutText.textContent = websiteContent.footerAbout || "RBM Shoes is a premium footwear brand that combines style, comfort, and cultural heritage. Step into culture with our unique designs.";
-                footerContactInfo.innerHTML = websiteContent.footerContact || `
-                    <li><i class="fas fa-map-marker-alt"></i> 123 Culture Street, Nairobi, Kenya</li>
-                    <li><i class="fas fa-phone"></i> +254 712 345 678</li>
-                    <li><i class="fas fa-envelope"></i> info@rbmshoes.com</li>
+        }
+
+        // Show loading indicator
+        function showLoading() {
+            // Create loading overlay if it doesn't exist
+            if (!document.getElementById('loading-overlay')) {
+                const overlay = document.createElement('div');
+                overlay.id = 'loading-overlay';
+                overlay.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(255, 255, 255, 0.8);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 9999;
                 `;
-                heroBackgroundImage = websiteContent.heroBg || heroBackgroundImage;
+                
+                const spinner = document.createElement('div');
+                spinner.className = 'spinner';
+                
+                overlay.appendChild(spinner);
+                document.body.appendChild(overlay);
             }
         }
 
-        // Save data to localStorage
-        function saveDataToStorage() {
-            localStorage.setItem('rbmProducts', JSON.stringify(allProducts));
-            localStorage.setItem('rbmSellers', JSON.stringify(sellers));
-            localStorage.setItem('rbmNextProductId', nextProductId.toString());
-            localStorage.setItem('rbmNextSellerId', nextSellerId.toString());
+        // Hide loading indicator
+        function hideLoading() {
+            const overlay = document.getElementById('loading-overlay');
+            if (overlay) {
+                overlay.remove();
+            }
         }
 
-        // Update user menu based on login status
+        // Update user menu based on authentication status
         function updateUserMenu() {
-            if (currentUser) {
+            if (apiService.isAuthenticated()) {
                 adminLoginLink.style.display = 'none';
                 sellerLoginLink.style.display = 'none';
                 sellerRegisterLink.style.display = 'none';
                 sellerDashboardLink.style.display = 'inline-block';
                 logoutLink.style.display = 'inline-block';
                 
-                if (userRole === 'admin') {
+                if (apiService.hasRole('admin')) {
                     adminDashboardLink.style.display = 'inline-block';
                     sellerDashboardLink.style.display = 'none';
                 } else {
@@ -3181,64 +4112,68 @@
         }
 
         // Handle admin login
-        function handleAdminLogin(e) {
+        async function handleAdminLogin(e) {
             e.preventDefault();
             
             const username = document.getElementById('admin-username').value;
             const password = document.getElementById('admin-password').value;
             
-            if (username === adminCredentials.username && password === adminCredentials.password) {
-                currentUser = { username, role: 'admin' };
-                userRole = 'admin';
-                updateUserMenu();
-                showNotification('Admin login successful!', 'success');
-                showSection('admin');
-                loadAdminDashboard();
+            try {
+                showLoading();
+                const response = await apiService.login(username, password, 'admin');
                 
-                // Reset form
-                adminLoginForm.reset();
-                adminLoginMessage.style.display = 'none';
-            } else {
-                adminLoginMessage.textContent = 'Invalid admin credentials!';
+                if (response.success) {
+                    updateUserMenu();
+                    showNotification('Admin login successful!', 'success');
+                    showSection('admin');
+                    loadAdminDashboard();
+                    
+                    // Reset form
+                    adminLoginForm.reset();
+                    adminLoginMessage.style.display = 'none';
+                }
+            } catch (error) {
+                adminLoginMessage.textContent = error.message || 'Invalid admin credentials!';
                 adminLoginMessage.className = 'status-message error';
                 adminLoginMessage.style.display = 'block';
+            } finally {
+                hideLoading();
             }
         }
 
         // Handle seller login
-        function handleSellerLogin(e) {
+        async function handleSellerLogin(e) {
             e.preventDefault();
             
             const email = document.getElementById('seller-email').value;
             const password = document.getElementById('seller-password').value;
             
-            // Find seller by email
-            const seller = sellers.find(s => s.email === email);
-            
-            if (seller && seller.password === password && seller.status === 'active') {
-                currentUser = seller;
-                userRole = 'seller';
-                updateUserMenu();
-                showNotification('Seller login successful!', 'success');
-                showSection('seller');
-                loadSellerDashboard();
+            try {
+                showLoading();
+                const response = await apiService.login(email, password, 'seller');
                 
-                // Reset form
-                sellerLoginForm.reset();
-                sellerLoginMessage.style.display = 'none';
-            } else if (seller && seller.password === password && seller.status !== 'active') {
-                sellerLoginMessage.textContent = 'Your account is pending approval. Please wait for admin approval.';
+                if (response.success) {
+                    updateUserMenu();
+                    currentSeller = response.user;
+                    showNotification('Seller login successful!', 'success');
+                    showSection('seller');
+                    loadSellerDashboard();
+                    
+                    // Reset form
+                    sellerLoginForm.reset();
+                    sellerLoginMessage.style.display = 'none';
+                }
+            } catch (error) {
+                sellerLoginMessage.textContent = error.message || 'Invalid seller credentials!';
                 sellerLoginMessage.className = 'status-message error';
                 sellerLoginMessage.style.display = 'block';
-            } else {
-                sellerLoginMessage.textContent = 'Invalid seller credentials!';
-                sellerLoginMessage.className = 'status-message error';
-                sellerLoginMessage.style.display = 'block';
+            } finally {
+                hideLoading();
             }
         }
 
         // Handle seller registration
-        function handleSellerRegister(e) {
+        async function handleSellerRegister(e) {
             e.preventDefault();
             
             const name = document.getElementById('register-name').value;
@@ -3255,83 +4190,119 @@
                 return;
             }
             
-            // Check if email already exists
-            if (sellers.some(s => s.email === email)) {
-                sellerRegisterMessage.textContent = 'Email already registered!';
+            try {
+                showLoading();
+                const response = await apiService.registerSeller({
+                    name,
+                    email,
+                    phone,
+                    password
+                });
+                
+                if (response.success) {
+                    sellerRegisterMessage.textContent = response.message || 'Registration successful! Please wait for admin approval.';
+                    sellerRegisterMessage.className = 'status-message success';
+                    sellerRegisterMessage.style.display = 'block';
+                    
+                    // Reset form
+                    sellerRegisterForm.reset();
+                    
+                    // Switch to login form after a delay
+                    setTimeout(() => {
+                        loginForms.forEach(form => form.classList.remove('active'));
+                        sellerLoginForm.classList.add('active');
+                        sellerRegisterMessage.style.display = 'none';
+                    }, 3000);
+                }
+            } catch (error) {
+                sellerRegisterMessage.textContent = error.message || 'Registration failed!';
                 sellerRegisterMessage.className = 'status-message error';
                 sellerRegisterMessage.style.display = 'block';
-                return;
+            } finally {
+                hideLoading();
             }
-            
-            // Create new seller
-            const newSeller = {
-                id: nextSellerId++,
-                name,
-                email,
-                phone,
-                password: password, // In a real app, this would be hashed
-                status: 'pending' // Pending admin approval
-            };
-            
-            sellers.push(newSeller);
-            saveDataToStorage();
-            
-            sellerRegisterMessage.textContent = 'Registration successful! Please wait for admin approval.';
-            sellerRegisterMessage.className = 'status-message success';
-            sellerRegisterMessage.style.display = 'block';
-            
-            // Reset form
-            sellerRegisterForm.reset();
-            
-            // Switch to login form after a delay
-            setTimeout(() => {
-                loginForms.forEach(form => form.classList.remove('active'));
-                sellerLoginForm.classList.add('active');
-                sellerRegisterMessage.style.display = 'none';
-            }, 3000);
         }
 
         // Handle logout
         function handleLogout(e) {
             e.preventDefault();
             
-            currentUser = null;
-            userRole = null;
+            apiService.logout();
+            currentSeller = null;
             updateUserMenu();
             showNotification('Logged out successfully!', 'success');
             showSection('home');
         }
 
         // Load admin dashboard
-        function loadAdminDashboard() {
-            // Update welcome message
-            adminWelcome.textContent = `Welcome, ${currentUser.username}`;
-            
-            // Update stats
-            document.getElementById('total-sellers').textContent = sellers.length;
-            document.getElementById('total-products').textContent = allProducts.length;
-            document.getElementById('total-orders').textContent = '0'; // Placeholder
-            
-            // Load sellers table
-            loadSellersTable();
-            
-            // Load products table
-            loadProductsTable();
-            
-            // Load website editor
-            heroTitleInput.value = heroTitle.textContent;
-            heroSubtitleInput.value = heroSubtitle.textContent;
-            heroBgInput.value = heroBackgroundImage;
-            heroBgPreview.style.backgroundImage = `url('${heroBackgroundImage}')`;
-            footerAboutInput.value = footerAboutText.textContent;
-            footerContactInput.value = footerContactInfo.innerText;
+        async function loadAdminDashboard() {
+            try {
+                showLoading();
+                
+                // Update welcome message
+                adminWelcome.textContent = `Welcome, ${apiService.user.name}`;
+                
+                // Load sellers
+                const sellersResponse = await apiService.getSellers();
+                const sellers = sellersResponse.sellers;
+                
+                // Load products
+                const productsResponse = await apiService.getProducts();
+                const products = productsResponse.products;
+                
+                // Update stats
+                document.getElementById('total-sellers').textContent = sellers.length;
+                document.getElementById('total-products').textContent = products.length;
+                document.getElementById('total-orders').textContent = '0'; // Placeholder
+                
+                // Count pending approvals
+                const pendingCount = sellers.filter(s => s.status === 'pending').length;
+                pendingApprovals.textContent = pendingCount;
+                
+                // Load sellers table
+                loadSellersTable(sellers);
+                
+                // Load products table
+                loadProductsTable(products);
+                
+                // Load website editor
+                heroTitleInput.value = heroTitle.textContent;
+                heroSubtitleInput.value = heroSubtitle.textContent;
+                heroBgInput.value = heroBackgroundImage;
+                heroBgPreview.style.backgroundImage = `url('${heroBackgroundImage}')`;
+                footerAboutInput.value = footerAboutText.textContent;
+                footerContactInput.value = footerContactInfo.innerText;
+                
+                // Load email templates
+                const templatesResponse = await apiService.getEmailTemplates();
+                emailTemplates = templatesResponse.templates;
+                
+                if (emailTemplates.approval) {
+                    approvalEmailSubject.value = emailTemplates.approval.subject;
+                    approvalEmailBody.value = emailTemplates.approval.body;
+                    updateEmailPreview('approval');
+                }
+                
+                if (emailTemplates.rejection) {
+                    rejectionEmailSubject.value = emailTemplates.rejection.subject;
+                    rejectionEmailBody.value = emailTemplates.rejection.body;
+                    updateEmailPreview('rejection');
+                }
+            } catch (error) {
+                console.error('Error loading admin dashboard:', error);
+                showNotification('Failed to load admin dashboard. Please try again.', 'error');
+            } finally {
+                hideLoading();
+            }
         }
 
         // Load sellers table
-        function loadSellersTable() {
+        function loadSellersTable(sellers) {
             sellersTableBody.innerHTML = '';
             
             sellers.forEach(seller => {
+                const registeredDate = new Date(seller.registeredAt).toLocaleDateString();
+                
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${seller.id}</td>
@@ -3340,10 +4311,12 @@
                     <td>${seller.phone}</td>
                     <td>${allProducts.filter(p => p.sellerId === seller.id).length}</td>
                     <td>${seller.status}</td>
+                    <td>${registeredDate}</td>
                     <td>
                         <button class="action-btn edit-btn" data-id="${seller.id}">Edit</button>
                         <button class="action-btn delete-btn" data-id="${seller.id}">Delete</button>
                         ${seller.status === 'pending' ? `<button class="action-btn approve-btn" data-id="${seller.id}" data-action="approve">Approve</button>` : ''}
+                        ${seller.status === 'pending' ? `<button class="action-btn delete-btn" data-id="${seller.id}" data-action="reject">Reject</button>` : ''}
                     </td>
                 `;
                 
@@ -3356,92 +4329,245 @@
             });
         }
 
-        // Handle seller actions (edit, delete, approve)
-        function handleSellerAction(e) {
+        // Handle seller actions (edit, delete, approve, reject)
+        async function handleSellerAction(e) {
             const sellerId = parseInt(e.target.getAttribute('data-id'));
             const action = e.target.getAttribute('data-action');
             
             if (action === 'approve') {
                 // Approve seller
-                const seller = sellers.find(s => s.id === sellerId);
-                if (seller) {
-                    seller.status = 'active';
-                    saveDataToStorage();
-                    loadSellersTable();
-                    showNotification('Seller approved successfully!', 'success');
-                }
+                await approveSeller(sellerId);
+            } else if (action === 'reject') {
+                // Reject seller
+                await rejectSeller(sellerId);
             } else if (e.target.classList.contains('edit-btn')) {
                 // Edit seller
-                showEditSellerForm(sellerId);
+                await showEditSellerForm(sellerId);
             } else if (e.target.classList.contains('delete-btn')) {
                 // Delete seller
-                if (confirm('Are you sure you want to delete this seller?')) {
-                    sellers = sellers.filter(s => s.id !== sellerId);
-                    saveDataToStorage();
-                    loadSellersTable();
-                    showNotification('Seller deleted successfully!', 'success');
-                }
+                await deleteSeller(sellerId);
+            }
+        }
+
+        // Approve seller
+        async function approveSeller(sellerId) {
+            try {
+                showLoading();
+                
+                // Get seller details
+                const sellerResponse = await apiService.getSeller(sellerId);
+                const seller = sellerResponse.seller;
+                
+                // Update seller status
+                await apiService.updateSeller(sellerId, { status: 'active' });
+                
+                // Send approval email
+                await sendApprovalEmail(seller);
+                
+                // Reload sellers table
+                await loadAdminDashboard();
+                
+                showNotification('Seller approved successfully!', 'success');
+            } catch (error) {
+                console.error('Error approving seller:', error);
+                showNotification('Failed to approve seller. Please try again.', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Reject seller
+        async function rejectSeller(sellerId) {
+            try {
+                showLoading();
+                
+                // Get seller details
+                const sellerResponse = await apiService.getSeller(sellerId);
+                const seller = sellerResponse.seller;
+                
+                // Show rejection email modal
+                emailTo.value = seller.email;
+                emailSubject.value = rejectionEmailSubject.value;
+                emailBody.value = rejectionEmailBody.value.replace('{seller_name}', seller.name);
+                emailReason.value = '';
+                
+                sendEmailModal.classList.add('active');
+                
+                // Set up send email button
+                sendEmailBtn.onclick = async () => {
+                    try {
+                        showLoading();
+                        
+                        const reason = emailReason.value || 'Your application does not meet our requirements at this time.';
+                        
+                        // Update seller status
+                        await apiService.updateSeller(sellerId, { status: 'rejected' });
+                        
+                        // Send rejection email
+                        await sendRejectionEmail(seller, reason);
+                        
+                        // Close modal
+                        sendEmailModal.classList.remove('active');
+                        
+                        // Reload sellers table
+                        await loadAdminDashboard();
+                        
+                        showNotification('Seller rejected successfully!', 'success');
+                    } catch (error) {
+                        console.error('Error rejecting seller:', error);
+                        showNotification('Failed to reject seller. Please try again.', 'error');
+                    } finally {
+                        hideLoading();
+                    }
+                };
+            } catch (error) {
+                console.error('Error rejecting seller:', error);
+                showNotification('Failed to reject seller. Please try again.', 'error');
+                hideLoading();
+            }
+        }
+
+        // Send approval email
+        async function sendApprovalEmail(seller) {
+            try {
+                const subject = approvalEmailSubject.value;
+                const body = approvalEmailBody.value.replace('{seller_name}', seller.name);
+                
+                await apiService.sendEmail({
+                    to: seller.email,
+                    subject,
+                    body,
+                    type: 'approval',
+                    sellerName: seller.name
+                });
+                
+                showNotification('Approval email sent to seller!', 'success');
+            } catch (error) {
+                console.error('Error sending approval email:', error);
+                showNotification('Failed to send approval email.', 'error');
+            }
+        }
+
+        // Send rejection email
+        async function sendRejectionEmail(seller, reason) {
+            try {
+                const subject = rejectionEmailSubject.value;
+                const body = rejectionEmailBody.value
+                    .replace('{seller_name}', seller.name)
+                    .replace('{rejection_reason}', reason);
+                
+                await apiService.sendEmail({
+                    to: seller.email,
+                    subject,
+                    body,
+                    type: 'rejection',
+                    sellerName: seller.name,
+                    rejectionReason: reason
+                });
+                
+                showNotification('Rejection email sent to seller!', 'success');
+            } catch (error) {
+                console.error('Error sending rejection email:', error);
+                showNotification('Failed to send rejection email.', 'error');
             }
         }
 
         // Show edit seller form
-        function showEditSellerForm(sellerId) {
-            const seller = sellers.find(s => s.id === sellerId);
-            if (!seller) return;
-            
-            // Populate form
-            document.getElementById('edit-seller-id').value = seller.id;
-            document.getElementById('edit-seller-name').value = seller.name;
-            document.getElementById('edit-seller-email').value = seller.email;
-            document.getElementById('edit-seller-phone').value = seller.phone;
-            document.getElementById('edit-seller-status').value = seller.status;
-            document.getElementById('edit-seller-password').value = '';
-            
-            // Show modal
-            editSellerModal.classList.add('active');
+        async function showEditSellerForm(sellerId) {
+            try {
+                showLoading();
+                
+                const sellerResponse = await apiService.getSeller(sellerId);
+                const seller = sellerResponse.seller;
+                
+                // Populate form
+                document.getElementById('edit-seller-id').value = seller.id;
+                document.getElementById('edit-seller-name').value = seller.name;
+                document.getElementById('edit-seller-email').value = seller.email;
+                document.getElementById('edit-seller-phone').value = seller.phone;
+                document.getElementById('edit-seller-status').value = seller.status;
+                document.getElementById('edit-seller-password').value = '';
+                
+                // Show modal
+                editSellerModal.classList.add('active');
+            } catch (error) {
+                console.error('Error loading seller details:', error);
+                showNotification('Failed to load seller details. Please try again.', 'error');
+            } finally {
+                hideLoading();
+            }
         }
 
         // Save seller edit
-        function saveSellerEdit() {
-            const sellerId = parseInt(document.getElementById('edit-seller-id').value);
-            const name = document.getElementById('edit-seller-name').value;
-            const email = document.getElementById('edit-seller-email').value;
-            const phone = document.getElementById('edit-seller-phone').value;
-            const status = document.getElementById('edit-seller-status').value;
-            const password = document.getElementById('edit-seller-password').value;
-            
-            // Find seller
-            const seller = sellers.find(s => s.id === sellerId);
-            if (!seller) return;
-            
-            // Update seller data
-            seller.name = name;
-            seller.email = email;
-            seller.phone = phone;
-            seller.status = status;
-            
-            if (password) {
-                seller.password = password;
+        async function saveSellerEdit() {
+            try {
+                showLoading();
+                
+                const sellerId = parseInt(document.getElementById('edit-seller-id').value);
+                const name = document.getElementById('edit-seller-name').value;
+                const email = document.getElementById('edit-seller-email').value;
+                const phone = document.getElementById('edit-seller-phone').value;
+                const status = document.getElementById('edit-seller-status').value;
+                const password = document.getElementById('edit-seller-password').value;
+                
+                const updateData = {
+                    name,
+                    email,
+                    phone,
+                    status
+                };
+                
+                if (password) {
+                    updateData.password = password;
+                }
+                
+                // Update seller
+                await apiService.updateSeller(sellerId, updateData);
+                
+                // Close modal
+                editSellerModal.classList.remove('active');
+                
+                // Reload sellers table
+                await loadAdminDashboard();
+                
+                showNotification('Seller updated successfully!', 'success');
+            } catch (error) {
+                console.error('Error updating seller:', error);
+                showNotification('Failed to update seller. Please try again.', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Delete seller
+        async function deleteSeller(sellerId) {
+            if (!confirm('Are you sure you want to delete this seller? This action cannot be undone.')) {
+                return;
             }
             
-            // Save to storage
-            saveDataToStorage();
-            
-            // Close modal
-            editSellerModal.classList.remove('active');
-            
-            // Reload table
-            loadSellersTable();
-            
-            // Show notification
-            showNotification('Seller updated successfully!', 'success');
+            try {
+                showLoading();
+                
+                await apiService.deleteSeller(sellerId);
+                
+                // Reload sellers table
+                await loadAdminDashboard();
+                
+                showNotification('Seller deleted successfully!', 'success');
+            } catch (error) {
+                console.error('Error deleting seller:', error);
+                showNotification('Failed to delete seller. Please try again.', 'error');
+            } finally {
+                hideLoading();
+            }
         }
 
         // Load products table
-        function loadProductsTable() {
+        function loadProductsTable(products) {
             productsTableBody.innerHTML = '';
             
-            allProducts.forEach(product => {
+            products.forEach(product => {
+                const createdDate = new Date(product.createdAt).toLocaleDateString();
                 const seller = sellers.find(s => s.id === product.sellerId);
                 const sellerName = seller ? seller.name : 'RBM';
                 
@@ -3453,6 +4579,7 @@
                     <td>${product.category}</td>
                     <td>${product.price.toLocaleString()}</td>
                     <td>${sellerName}</td>
+                    <td>${createdDate}</td>
                     <td>
                         <button class="action-btn edit-btn" data-id="${product.id}">Edit</button>
                         <button class="action-btn delete-btn" data-id="${product.id}">Delete</button>
@@ -3469,65 +4596,69 @@
         }
 
         // Handle product actions (edit, delete)
-        function handleProductAction(e) {
+        async function handleProductAction(e) {
             const productId = parseInt(e.target.getAttribute('data-id'));
             
             if (e.target.classList.contains('edit-btn')) {
                 // Edit product
-                showEditProductForm(productId);
+                await showEditProductForm(productId);
             } else if (e.target.classList.contains('delete-btn')) {
                 // Delete product
-                if (confirm('Are you sure you want to delete this product?')) {
-                    allProducts = allProducts.filter(p => p.id !== productId);
-                    saveDataToStorage();
-                    loadProductsTable();
-                    showNotification('Product deleted successfully!', 'success');
-                }
+                await deleteProduct(productId);
             }
         }
 
         // Show edit product form
-        function showEditProductForm(productId) {
-            const product = allProducts.find(p => p.id === productId);
-            if (!product) return;
-            
-            // Populate form
-            document.getElementById('edit-product-id').value = product.id;
-            document.getElementById('edit-product-name').value = product.name;
-            document.getElementById('edit-product-price-kes').value = product.price;
-            document.getElementById('edit-product-price-usd').value = product.priceUSD;
-            document.getElementById('edit-product-category').value = product.category;
-            document.getElementById('edit-product-description').value = product.description;
-            document.getElementById('edit-product-image').value = product.image;
-            
-            // Populate specifications
-            const specsContainer = document.getElementById('edit-product-specs');
-            specsContainer.innerHTML = '';
-            
-            Object.entries(product.specifications).forEach(([key, value]) => {
-                const specItem = document.createElement('div');
-                specItem.className = 'spec-item';
-                specItem.innerHTML = `
-                    <input type="text" value="${key}" class="spec-name">
-                    <input type="text" value="${value}" class="spec-value">
-                `;
-                specsContainer.appendChild(specItem);
-            });
-            
-            // Populate sizes
-            const sizesContainer = document.getElementById('edit-product-size-inputs');
-            sizesContainer.innerHTML = '';
-            
-            product.sizes.forEach(size => {
-                const sizeInput = document.createElement('input');
-                sizeInput.type = 'text';
-                sizeInput.className = 'size-input';
-                sizeInput.value = size;
-                sizesContainer.appendChild(sizeInput);
-            });
-            
-            // Show modal
-            editProductModal.classList.add('active');
+        async function showEditProductForm(productId) {
+            try {
+                showLoading();
+                
+                const productResponse = await apiService.getProduct(productId);
+                const product = productResponse.product;
+                
+                // Populate form
+                document.getElementById('edit-product-id').value = product.id;
+                document.getElementById('edit-product-name').value = product.name;
+                document.getElementById('edit-product-price-kes').value = product.price;
+                document.getElementById('edit-product-price-usd').value = product.priceUSD;
+                document.getElementById('edit-product-category').value = product.category;
+                document.getElementById('edit-product-description').value = product.description;
+                document.getElementById('edit-product-image').value = product.image;
+                
+                // Populate specifications
+                const specsContainer = document.getElementById('edit-product-specs');
+                specsContainer.innerHTML = '';
+                
+                Object.entries(product.specifications).forEach(([key, value]) => {
+                    const specItem = document.createElement('div');
+                    specItem.className = 'spec-item';
+                    specItem.innerHTML = `
+                        <input type="text" value="${key}" class="spec-name">
+                        <input type="text" value="${value}" class="spec-value">
+                    `;
+                    specsContainer.appendChild(specItem);
+                });
+                
+                // Populate sizes
+                const sizesContainer = document.getElementById('edit-product-size-inputs');
+                sizesContainer.innerHTML = '';
+                
+                product.sizes.forEach(size => {
+                    const sizeInput = document.createElement('input');
+                    sizeInput.type = 'text';
+                    sizeInput.className = 'size-input';
+                    sizeInput.value = size;
+                    sizesContainer.appendChild(sizeInput);
+                });
+                
+                // Show modal
+                editProductModal.classList.add('active');
+            } catch (error) {
+                console.error('Error loading product details:', error);
+                showNotification('Failed to load product details. Please try again.', 'error');
+            } finally {
+                hideLoading();
+            }
         }
 
         // Add edit specification row
@@ -3543,114 +4674,339 @@
         }
 
         // Save product edit
-        function saveProductEdit() {
-            const productId = parseInt(document.getElementById('edit-product-id').value);
-            const name = document.getElementById('edit-product-name').value;
-            const priceKES = parseInt(document.getElementById('edit-product-price-kes').value);
-            const priceUSD = parseInt(document.getElementById('edit-product-price-usd').value);
-            const category = document.getElementById('edit-product-category').value;
-            const description = document.getElementById('edit-product-description').value;
-            const image = document.getElementById('edit-product-image').value;
-            
-            // Find product
-            const product = allProducts.find(p => p.id === productId);
-            if (!product) return;
-            
-            // Update product data
-            product.name = name;
-            product.price = priceKES;
-            product.priceUSD = priceUSD;
-            product.category = category;
-            product.description = description;
-            product.image = image;
-            
-            // Update specifications
-            product.specifications = {};
-            document.querySelectorAll('#edit-product-specs .spec-item').forEach(item => {
-                const specName = item.querySelector('.spec-name').value;
-                const specValue = item.querySelector('.spec-value').value;
+        async function saveProductEdit() {
+            try {
+                showLoading();
                 
-                if (specName && specValue) {
-                    product.specifications[specName] = specValue;
+                const productId = parseInt(document.getElementById('edit-product-id').value);
+                const name = document.getElementById('edit-product-name').value;
+                const priceKES = parseInt(document.getElementById('edit-product-price-kes').value);
+                const priceUSD = parseInt(document.getElementById('edit-product-price-usd').value);
+                const category = document.getElementById('edit-product-category').value;
+                const description = document.getElementById('edit-product-description').value;
+                const image = document.getElementById('edit-product-image').value;
+                
+                // Collect specifications
+                const specifications = {};
+                document.querySelectorAll('#edit-product-specs .spec-item').forEach(item => {
+                    const specName = item.querySelector('.spec-name').value;
+                    const specValue = item.querySelector('.spec-value').value;
+                    
+                    if (specName && specValue) {
+                        specifications[specName] = specValue;
+                    }
+                });
+                
+                // Collect sizes
+                const sizes = [];
+                document.querySelectorAll('#edit-product-size-inputs .size-input').forEach(input => {
+                    const size = input.value.trim();
+                    if (size) {
+                        sizes.push(size);
+                    }
+                });
+                
+                const updateData = {
+                    name,
+                    price: priceKES,
+                    priceUSD,
+                    category,
+                    description,
+                    image,
+                    specifications,
+                    sizes
+                };
+                
+                // Update product
+                await apiService.updateProduct(productId, updateData);
+                
+                // Close modal
+                editProductModal.classList.remove('active');
+                
+                // Reload products table
+                await loadAdminDashboard();
+                
+                showNotification('Product updated successfully!', 'success');
+            } catch (error) {
+                console.error('Error updating product:', error);
+                showNotification('Failed to update product. Please try again.', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Delete product
+        async function deleteProduct(productId) {
+            if (!confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
+                return;
+            }
+            
+            try {
+                showLoading();
+                
+                await apiService.deleteProduct(productId);
+                
+                // Reload products table
+                await loadAdminDashboard();
+                
+                showNotification('Product deleted successfully!', 'success');
+            } catch (error) {
+                console.error('Error deleting product:', error);
+                showNotification('Failed to delete product. Please try again.', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Save website changes
+        async function saveWebsiteChanges() {
+            try {
+                showLoading();
+                
+                const websiteContent = {
+                    heroTitle: heroTitleInput.value,
+                    heroSubtitle: heroSubtitleInput.value,
+                    heroBg: heroBgInput.value,
+                    footerAbout: footerAboutInput.value,
+                    footerContact: footerContactInput.value
+                };
+                
+                await apiService.updateWebsiteContent(websiteContent);
+                
+                // Update live website
+                heroTitle.textContent = websiteContent.heroTitle;
+                heroSubtitle.textContent = websiteContent.heroSubtitle;
+                heroBackgroundImage = websiteContent.heroBg || heroBackgroundImage;
+                heroSection.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('${heroBackgroundImage}')`;
+                footerAboutText.textContent = websiteContent.footerAbout;
+                footerContactInfo.innerHTML = websiteContent.footerContact;
+                
+                showNotification('Website content updated successfully!', 'success');
+            } catch (error) {
+                console.error('Error saving website changes:', error);
+                showNotification('Failed to save website changes. Please try again.', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Update email preview
+        function updateEmailPreview(type) {
+            if (type === 'approval') {
+                const subject = approvalEmailSubject.value;
+                const body = approvalEmailBody.value;
+                approvalEmailPreview.innerHTML = `
+                    <p><strong>Subject:</strong> ${subject}</p>
+                    <p><strong>Body:</strong></p>
+                    <pre>${body.replace(/{seller_name}/g, 'John Doe')}</pre>
+                `;
+            } else if (type === 'rejection') {
+                const subject = rejectionEmailSubject.value;
+                const body = rejectionEmailBody.value;
+                rejectionEmailPreview.innerHTML = `
+                    <p><strong>Subject:</strong> ${subject}</p>
+                    <p><strong>Body:</strong></p>
+                    <pre>${body.replace(/{seller_name}/g, 'John Doe').replace(/{rejection_reason}/g, 'Your application does not meet our requirements at this time.')}</pre>
+                `;
+            }
+        }
+
+        // Save email template
+        async function saveEmailTemplate(type) {
+            try {
+                showLoading();
+                
+                const templates = { ...emailTemplates };
+                
+                if (type === 'approval') {
+                    templates.approval = {
+                        subject: approvalEmailSubject.value,
+                        body: approvalEmailBody.value
+                    };
+                } else if (type === 'rejection') {
+                    templates.rejection = {
+                        subject: rejectionEmailSubject.value,
+                        body: rejectionEmailBody.value
+                    };
                 }
-            });
-            
-            // Update sizes
-            product.sizes = [];
-            document.querySelectorAll('#edit-product-size-inputs .size-input').forEach(input => {
-                const size = input.value.trim();
-                if (size) {
-                    product.sizes.push(size);
-                }
-            });
-            
-            // Save to storage
-            saveDataToStorage();
-            
-            // Close modal
-            editProductModal.classList.remove('active');
-            
-            // Reload table
-            loadProductsTable();
-            
-            // Show notification
-            showNotification('Product updated successfully!', 'success');
+                
+                await apiService.updateEmailTemplates(templates);
+                
+                emailTemplates = templates;
+                
+                showNotification('Email template saved successfully!', 'success');
+            } catch (error) {
+                console.error('Error saving email template:', error);
+                showNotification('Failed to save email template. Please try again.', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Send email to seller
+        async function sendEmailToSeller() {
+            try {
+                showLoading();
+                
+                const to = emailTo.value;
+                const subject = emailSubject.value;
+                const body = emailBody.value;
+                const reason = emailReason.value;
+                
+                await apiService.sendEmail({
+                    to,
+                    subject,
+                    body,
+                    type: 'custom',
+                    rejectionReason: reason
+                });
+                
+                // Close modal
+                sendEmailModal.classList.remove('active');
+                
+                showNotification('Email sent successfully!', 'success');
+            } catch (error) {
+                console.error('Error sending email:', error);
+                showNotification('Failed to send email. Please try again.', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Export sellers
+        function exportSellers() {
+            try {
+                const sellers = JSON.parse(localStorage.getItem('rbm_sellers')) || [];
+                
+                // Create CSV content
+                let csvContent = "ID,Name,Email,Phone,Status,Registered At\n";
+                
+                sellers.forEach(seller => {
+                    csvContent += `${seller.id},"${seller.name}",${seller.email},${seller.phone},${seller.status},${seller.registeredAt}\n`;
+                });
+                
+                // Create download link
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.setAttribute('href', url);
+                link.setAttribute('download', 'rbm_sellers.csv');
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                showNotification('Sellers exported successfully!', 'success');
+            } catch (error) {
+                console.error('Error exporting sellers:', error);
+                showNotification('Failed to export sellers. Please try again.', 'error');
+            }
+        }
+
+        // Export products
+        function exportProducts() {
+            try {
+                const products = JSON.parse(localStorage.getItem('rbm_products')) || [];
+                
+                // Create CSV content
+                let csvContent = "ID,Name,Category,Price (KES),Price (USD),Seller ID,Created At\n";
+                
+                products.forEach(product => {
+                    csvContent += `${product.id},"${product.name}",${product.category},${product.price},${product.priceUSD},${product.sellerId || ''},${product.createdAt}\n`;
+                });
+                
+                // Create download link
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.setAttribute('href', url);
+                link.setAttribute('download', 'rbm_products.csv');
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                showNotification('Products exported successfully!', 'success');
+            } catch (error) {
+                console.error('Error exporting products:', error);
+                showNotification('Failed to export products. Please try again.', 'error');
+            }
         }
 
         // Show add seller form (placeholder)
         function showAddSellerForm() {
-            showNotification('Add seller form would be implemented here.', 'success');
+            showNotification('Add seller form would be implemented here.', 'info');
         }
 
         // Show add product form (placeholder)
         function showAddProductForm() {
-            showNotification('Add product form would be implemented here.', 'success');
-        }
-
-        // Save website changes
-        function saveWebsiteChanges() {
-            const websiteContent = {
-                heroTitle: heroTitleInput.value,
-                heroSubtitle: heroSubtitleInput.value,
-                heroBg: heroBgInput.value,
-                footerAbout: footerAboutInput.value,
-                footerContact: footerContactInput.value
-            };
-            
-            localStorage.setItem('rbmWebsiteContent', JSON.stringify(websiteContent));
-            
-            // Update live website
-            heroTitle.textContent = websiteContent.heroTitle;
-            heroSubtitle.textContent = websiteContent.heroSubtitle;
-            heroBackgroundImage = websiteContent.heroBg || heroBackgroundImage;
-            heroSection.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('${heroBackgroundImage}')`;
-            footerAboutText.textContent = websiteContent.footerAbout;
-            footerContactInfo.innerHTML = websiteContent.footerContact;
-            
-            showNotification('Website content updated successfully!', 'success');
+            showNotification('Add product form would be implemented here.', 'info');
         }
 
         // Load seller dashboard
-        function loadSellerDashboard() {
-            // Update welcome message
-            sellerWelcome.textContent = `Welcome, ${currentUser.name}`;
-            
-            // Update stats
-            const sellerProducts = allProducts.filter(p => p.sellerId === currentUser.id);
-            document.getElementById('seller-total-products').textContent = sellerProducts.length;
-            document.getElementById('seller-total-sales').textContent = '0'; // Placeholder
-            
-            // Load seller products table
-            loadSellerProductsTable();
+        async function loadSellerDashboard() {
+            try {
+                showLoading();
+                
+                // Update welcome message
+                sellerWelcome.textContent = `Welcome, ${currentSeller.name}`;
+                
+                // Get seller details
+                const sellerResponse = await apiService.getSeller(currentSeller.id);
+                const seller = sellerResponse.seller;
+                
+                // Update profile info
+                document.getElementById('profile-name').value = seller.name;
+                document.getElementById('profile-email').value = seller.email;
+                document.getElementById('profile-phone').value = seller.phone;
+                document.getElementById('profile-status').value = seller.status;
+                document.getElementById('profile-member-since').value = new Date(seller.registeredAt).toLocaleDateString();
+                
+                // Update dashboard stats
+                const productsResponse = await apiService.getProducts();
+                const products = productsResponse.products;
+                const sellerProducts = products.filter(p => p.sellerId === currentSeller.id);
+                
+                document.getElementById('seller-total-products').textContent = sellerProducts.length;
+                document.getElementById('seller-total-sales').textContent = '0'; // Placeholder
+                document.getElementById('seller-account-status').textContent = seller.status;
+                document.getElementById('seller-member-since').textContent = new Date(seller.registeredAt).toLocaleDateString();
+                
+                // Show status message if account is not active
+                if (seller.status !== 'active') {
+                    sellerStatusMessage.style.display = 'block';
+                } else {
+                    sellerStatusMessage.style.display = 'none';
+                }
+                
+                // Load seller products table
+                loadSellerProductsTable(sellerProducts);
+            } catch (error) {
+                console.error('Error loading seller dashboard:', error);
+                showNotification('Failed to load seller dashboard. Please try again.', 'error');
+            } finally {
+                hideLoading();
+            }
         }
 
         // Load seller products table
-        function loadSellerProductsTable() {
+        function loadSellerProductsTable(products) {
             sellerProductsTableBody.innerHTML = '';
             
-            const sellerProducts = allProducts.filter(p => p.sellerId === currentUser.id);
+            if (products.length === 0) {
+                sellerProductsTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 20px;">
+                            No products found. Add your first product to get started!
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
             
-            sellerProducts.forEach(product => {
+            products.forEach(product => {
+                const createdDate = new Date(product.createdAt).toLocaleDateString();
+                
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${product.id}</td>
@@ -3658,6 +5014,7 @@
                     <td>${product.name}</td>
                     <td>${product.category}</td>
                     <td>${product.price.toLocaleString()}</td>
+                    <td>${currentSeller.status === 'active' ? 'Active' : 'Pending Approval'}</td>
                     <td>
                         <button class="action-btn edit-btn" data-id="${product.id}">Edit</button>
                         <button class="action-btn delete-btn" data-id="${product.id}">Delete</button>
@@ -3674,20 +5031,105 @@
         }
 
         // Handle seller product actions (edit, delete)
-        function handleSellerProductAction(e) {
+        async function handleSellerProductAction(e) {
             const productId = parseInt(e.target.getAttribute('data-id'));
             
             if (e.target.classList.contains('edit-btn')) {
                 // Edit product (placeholder)
-                showNotification('Edit product functionality would be implemented here.', 'success');
+                showNotification('Edit product functionality would be implemented here.', 'info');
             } else if (e.target.classList.contains('delete-btn')) {
                 // Delete product
-                if (confirm('Are you sure you want to delete this product?')) {
-                    allProducts = allProducts.filter(p => p.id !== productId);
-                    saveDataToStorage();
-                    loadSellerProductsTable();
-                    showNotification('Product deleted successfully!', 'success');
+                await deleteSellerProduct(productId);
+            }
+        }
+
+        // Delete seller product
+        async function deleteSellerProduct(productId) {
+            if (!confirm('Are you sure you want to delete this product? This action cannot be undone.')) {
+                return;
+            }
+            
+            try {
+                showLoading();
+                
+                await apiService.deleteProduct(productId);
+                
+                // Reload seller dashboard
+                await loadSellerDashboard();
+                
+                showNotification('Product deleted successfully!', 'success');
+            } catch (error) {
+                console.error('Error deleting product:', error);
+                showNotification('Failed to delete product. Please try again.', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Update seller profile
+        async function updateSellerProfile() {
+            try {
+                showLoading();
+                
+                const password = document.getElementById('profile-password').value;
+                const confirmPassword = document.getElementById('profile-confirm-password').value;
+                
+                if (password && password !== confirmPassword) {
+                    showNotification('Passwords do not match!', 'error');
+                    return;
                 }
+                
+                const updateData = {};
+                
+                if (password) {
+                    updateData.password = password;
+                }
+                
+                // Update seller
+                await apiService.updateSeller(currentSeller.id, updateData);
+                
+                // Clear password fields
+                document.getElementById('profile-password').value = '';
+                document.getElementById('profile-confirm-password').value = '';
+                
+                showNotification('Profile updated successfully!', 'success');
+            } catch (error) {
+                console.error('Error updating profile:', error);
+                showNotification('Failed to update profile. Please try again.', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Export seller products
+        function exportSellerProducts() {
+            try {
+                const productsResponse = apiService.getProducts();
+                const products = productsResponse.products;
+                const sellerProducts = products.filter(p => p.sellerId === currentSeller.id);
+                
+                // Create CSV content
+                let csvContent = "ID,Name,Category,Price (KES),Price (USD),Created At\n";
+                
+                sellerProducts.forEach(product => {
+                    csvContent += `${product.id},"${product.name}",${product.category},${product.price},${product.priceUSD},${product.createdAt}\n`;
+                });
+                
+                // Create download link
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.setAttribute('href', url);
+                link.setAttribute('download', `rbm_products_${currentSeller.name.replace(/\s+/g, '_')}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                showNotification('Products exported successfully!', 'success');
+            } catch (error) {
+                console.error('Error exporting products:', error);
+                showNotification('Failed to export products. Please try again.', 'error');
             }
         }
 
@@ -3738,99 +5180,106 @@
         }
 
         // Save product
-        function saveProduct() {
-            const name = document.getElementById('product-name').value;
-            const priceKES = parseInt(document.getElementById('product-price-kes').value);
-            const priceUSD = parseInt(document.getElementById('product-price-usd').value);
-            const category = document.getElementById('product-category').value;
-            const description = document.getElementById('product-description').value;
-            
-            // Validate required fields
-            if (!name || !priceKES || !priceUSD || !category || !description) {
-                showNotification('Please fill in all required fields!', 'error');
-                return;
-            }
-            
-            // Validate images
-            if (productImages.length === 0) {
-                showNotification('Please upload at least one product image!', 'error');
-                return;
-            }
-            
-            // Collect specifications
-            const specifications = {};
-            document.querySelectorAll('#product-specs .spec-item').forEach(item => {
-                const specName = item.querySelector('.spec-name').value;
-                const specValue = item.querySelector('.spec-value').value;
+        async function saveProduct() {
+            try {
+                showLoading();
                 
-                if (specName && specValue) {
-                    specifications[specName] = specValue;
+                const name = document.getElementById('product-name').value;
+                const priceKES = parseInt(document.getElementById('product-price-kes').value);
+                const priceUSD = parseInt(document.getElementById('product-price-usd').value);
+                const category = document.getElementById('product-category').value;
+                const description = document.getElementById('product-description').value;
+                
+                // Validate required fields
+                if (!name || !priceKES || !priceUSD || !category || !description) {
+                    showNotification('Please fill in all required fields!', 'error');
+                    return;
                 }
-            });
-            
-            // Collect sizes
-            const sizes = [];
-            document.querySelectorAll('#product-size-inputs .size-input').forEach(input => {
-                const size = input.value.trim();
-                if (size) {
-                    sizes.push(size);
+                
+                // Validate images
+                if (productImages.length === 0) {
+                    showNotification('Please upload at least one product image!', 'error');
+                    return;
                 }
-            });
-            
-            // Create new product
-            const newProduct = {
-                id: nextProductId++,
-                name,
-                price: priceKES,
-                priceUSD,
-                category,
-                image: productImages[0], // Use first image as main image
-                images: [...productImages],
-                description,
-                specifications,
-                sizes,
-                sellerId: currentUser.id
-            };
-            
-            // Add to products
-            allProducts.push(newProduct);
-            saveDataToStorage();
-            
-            // Show success message
-            showNotification('Product added successfully!', 'success');
-            
-            // Reset form
-            document.getElementById('product-name').value = '';
-            document.getElementById('product-price-kes').value = '';
-            document.getElementById('product-price-usd').value = '';
-            document.getElementById('product-category').value = '';
-            document.getElementById('product-description').value = '';
-            document.getElementById('product-image-preview').innerHTML = '';
-            document.getElementById('product-specs').innerHTML = `
-                <div class="spec-item">
-                    <input type="text" placeholder="Specification Name" class="spec-name">
-                    <input type="text" placeholder="Specification Value" class="spec-value">
-                </div>
-            `;
-            document.querySelectorAll('#product-size-inputs .size-input').forEach(input => {
-                input.value = '';
-            });
-            
-            // Clear product images
-            productImages = [];
-            
-            // Switch to products tab
-            sellerTabs.forEach(t => t.classList.remove('active'));
-            document.querySelector('[data-tab="products"]').classList.add('active');
-            sellerContents.forEach(content => {
-                content.classList.remove('active');
-                if (content.id === 'seller-products') {
-                    content.classList.add('active');
-                }
-            });
-            
-            // Reload products table
-            loadSellerProductsTable();
+                
+                // Collect specifications
+                const specifications = {};
+                document.querySelectorAll('#product-specs .spec-item').forEach(item => {
+                    const specName = item.querySelector('.spec-name').value;
+                    const specValue = item.querySelector('.spec-value').value;
+                    
+                    if (specName && specValue) {
+                        specifications[specName] = specValue;
+                    }
+                });
+                
+                // Collect sizes
+                const sizes = [];
+                document.querySelectorAll('#product-size-inputs .size-input').forEach(input => {
+                    const size = input.value.trim();
+                    if (size) {
+                        sizes.push(size);
+                    }
+                });
+                
+                // Create new product
+                const newProduct = {
+                    name,
+                    price: priceKES,
+                    priceUSD,
+                    category,
+                    description,
+                    image: productImages[0], // Use first image as main image
+                    images: [...productImages],
+                    specifications,
+                    sizes,
+                    sellerId: currentSeller.id
+                };
+                
+                // Add product
+                await apiService.addProduct(newProduct);
+                
+                // Show success message
+                showNotification('Product added successfully!', 'success');
+                
+                // Reset form
+                document.getElementById('product-name').value = '';
+                document.getElementById('product-price-kes').value = '';
+                document.getElementById('product-price-usd').value = '';
+                document.getElementById('product-category').value = '';
+                document.getElementById('product-description').value = '';
+                document.getElementById('product-image-preview').innerHTML = '';
+                document.getElementById('product-specs').innerHTML = `
+                    <div class="spec-item">
+                        <input type="text" placeholder="Specification Name" class="spec-name">
+                        <input type="text" placeholder="Specification Value" class="spec-value">
+                    </div>
+                `;
+                document.querySelectorAll('#product-size-inputs .size-input').forEach(input => {
+                    input.value = '';
+                });
+                
+                // Clear product images
+                productImages = [];
+                
+                // Switch to products tab
+                sellerTabs.forEach(t => t.classList.remove('active'));
+                document.querySelector('[data-tab="products"]').classList.add('active');
+                sellerContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === 'seller-products') {
+                        content.classList.add('active');
+                    }
+                });
+                
+                // Reload products table
+                await loadSellerDashboard();
+            } catch (error) {
+                console.error('Error saving product:', error);
+                showNotification('Failed to save product. Please try again.', 'error');
+            } finally {
+                hideLoading();
+            }
         }
 
         // Render products
@@ -4174,7 +5623,7 @@
         }
 
         // Perform search
-        function performSearch() {
+        async function performSearch() {
             const searchTerm = searchBar.value.toLowerCase().trim();
             
             if (!searchTerm) {
@@ -4185,8 +5634,10 @@
             // Show loading state
             productGrid.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
             
-            // Simulate API call delay
-            setTimeout(() => {
+            try {
+                // Simulate API call delay
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
                 // First search in local products
                 let filteredProducts = allProducts.filter(product => {
                     const nameMatch = product.name.toLowerCase().includes(searchTerm);
@@ -4201,36 +5652,19 @@
                     showNotification('Searching external sources...');
                     
                     // Simulate fetching from external sources
-                    setTimeout(() => {
-                        let externalResults = [];
-                        
-                        externalSources.forEach(source => {
-                            const results = source.products.filter(product => {
-                                const nameMatch = product.name.toLowerCase().includes(searchTerm);
-                                const priceMatch = product.price.toString().includes(searchTerm) || 
-                                                  product.priceUSD.toString().includes(searchTerm);
-                                
-                                return nameMatch || priceMatch;
-                            });
-                            
-                            externalResults = [...externalResults, ...results];
-                        });
-                        
-                        if (externalResults.length > 0) {
-                            // Add external products to all products
-                            allProducts = [...allProducts, ...externalResults];
-                            filteredProducts = externalResults;
-                            showNotification(`Found ${externalResults.length} products from external sources`);
-                        } else {
-                            showNotification('No products found in any source');
-                        }
-                        
-                        renderProducts(filteredProducts);
-                    }, 1000);
-                } else {
-                    renderProducts(filteredProducts);
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    // In a real app, this would be an actual API call to external sources
+                    // For now, we'll just show a message
+                    showNotification('No products found in any source');
+                    filteredProducts = [];
                 }
-            }, 500);
+                
+                renderProducts(filteredProducts);
+            } catch (error) {
+                console.error('Error searching products:', error);
+                showNotification('Failed to search products. Please try again.', 'error');
+            }
         }
 
         // Search products (for input event)
@@ -4249,6 +5683,8 @@
                 notification.classList.add('success');
             } else if (type === 'error') {
                 notification.classList.add('error');
+            } else if (type === 'info') {
+                notification.classList.add('info');
             }
             
             setTimeout(() => {
@@ -4257,7 +5693,7 @@
         }
 
         // Show section
-        function showSection(section) {
+        async function showSection(section) {
             currentSection = section;
             hideAllSections();
             
@@ -4286,10 +5722,10 @@
                 loginSection.style.display = 'block';
             } else if (section === 'admin') {
                 adminSection.style.display = 'block';
-                loadAdminDashboard();
+                await loadAdminDashboard();
             } else if (section === 'seller') {
                 sellerSection.style.display = 'block';
-                loadSellerDashboard();
+                await loadSellerDashboard();
             } else {
                 // For about and contact, we'll show a placeholder with shoes
                 const homeSection = document.getElementById('home');
