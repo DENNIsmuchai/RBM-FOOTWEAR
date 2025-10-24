@@ -1,0 +1,4433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RBM Shoes - Step Into Culture</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #c8102e;
+            --secondary: #1a1a1a;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --admin: #28a745;
+            --seller: #007bff;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        /* Header Styles */
+        header {
+            background: var(--secondary);
+            color: white;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .logo i {
+            color: var(--primary);
+            margin-right: 10px;
+            font-size: 28px;
+        }
+        
+        .slogan {
+            font-size: 14px;
+            color: #ddd;
+            margin-left: 15px;
+            font-style: italic;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 25px;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            color: var(--primary);
+        }
+        
+        .cart-icon {
+            position: relative;
+            cursor: pointer;
+            font-size: 20px;
+        }
+        
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-menu a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .user-menu a:hover {
+            color: var(--primary);
+        }
+        
+        .admin-link {
+            color: var(--admin) !important;
+        }
+        
+        .seller-link {
+            color: var(--seller) !important;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80') center/cover;
+            color: white;
+            text-align: center;
+            padding: 100px 20px;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .hero p {
+            font-size: 1.5rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .search-bar {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .search-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .search-btn:hover {
+            background: #a00926;
+        }
+        
+        /* Product Section */
+        .products {
+            padding: 60px 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+            color: var(--secondary);
+        }
+        
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+        
+        .product-img {
+            height: 220px;
+            overflow: hidden;
+        }
+        
+        .product-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .product-card:hover .product-img img {
+            transform: scale(1.05);
+        }
+        
+        .product-info {
+            padding: 20px;
+        }
+        
+        .product-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--secondary);
+        }
+        
+        .product-price {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .price-usd {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+        
+        .view-details {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .view-details:hover {
+            background: #a00926;
+        }
+        
+        /* Category Filter */
+        .category-filter {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .category-btn {
+            padding: 8px 20px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .category-btn:hover,
+        .category-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        /* Product Detail Section */
+        .product-detail {
+            padding: 60px 0;
+            display: none;
+        }
+        
+        .product-detail-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .product-detail-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+        
+        .product-detail-images {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .main-image {
+            height: 400px;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+        
+        .main-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .thumbnail-images {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .thumbnail {
+            width: 80px;
+            height: 80px;
+            border-radius: 5px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: border-color 0.3s;
+        }
+        
+        .thumbnail.active {
+            border-color: var(--primary);
+        }
+        
+        .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .product-detail-info h1 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: var(--secondary);
+        }
+        
+        .product-detail-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+        
+        .product-detail-description {
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+        
+        .product-specs {
+            margin-bottom: 30px;
+        }
+        
+        .product-specs h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--secondary);
+        }
+        
+        .specs-list {
+            list-style: none;
+        }
+        
+        .specs-list li {
+            margin-bottom: 10px;
+            display: flex;
+        }
+        
+        .specs-list li strong {
+            width: 150px;
+        }
+        
+        .size-selector {
+            margin-bottom: 30px;
+        }
+        
+        .size-selector h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--secondary);
+        }
+        
+        .size-options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .size-option {
+            width: 50px;
+            height: 50px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .size-option:hover,
+        .size-option.selected {
+            border-color: var(--primary);
+            background: rgba(200, 16, 46, 0.1);
+        }
+        
+        .size-option.unavailable {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .product-detail-actions {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .add-to-cart-detail {
+            flex: 2;
+            padding: 15px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .add-to-cart-detail:hover {
+            background: #a00926;
+        }
+        
+        .back-btn {
+            flex: 1;
+            padding: 15px;
+            background: white;
+            color: var(--secondary);
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: var(--light);
+        }
+        
+        /* Cart Section */
+        .cart-section {
+            padding: 60px 0;
+            display: none;
+        }
+        
+        .cart-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .cart-header h2 {
+            font-size: 1.8rem;
+            color: var(--secondary);
+        }
+        
+        .cart-items {
+            margin-bottom: 30px;
+        }
+        
+        .cart-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .cart-item img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-right: 20px;
+        }
+        
+        .cart-item-info {
+            flex-grow: 1;
+        }
+        
+        .cart-item-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .cart-item-price {
+            color: var(--primary);
+            font-weight: 700;
+        }
+        
+        .cart-item-quantity {
+            display: flex;
+            align-items: center;
+            margin: 0 15px;
+        }
+        
+        .cart-item-quantity button {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .cart-item-quantity input {
+            width: 40px;
+            text-align: center;
+            border: none;
+            margin: 0 5px;
+        }
+        
+        .cart-item-remove {
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+        
+        .cart-item-remove:hover {
+            color: var(--primary);
+        }
+        
+        .cart-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .checkout-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .checkout-btn:hover {
+            background: #a00926;
+        }
+        
+        .empty-cart {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray);
+        }
+        
+        .empty-cart i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        
+        /* Checkout Section */
+        .checkout-section {
+            padding: 60px 0;
+            display: none;
+        }
+        
+        .checkout-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .checkout-header {
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .checkout-header h2 {
+            font-size: 1.8rem;
+            color: var(--secondary);
+        }
+        
+        .checkout-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .payment-methods {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .payment-method {
+            flex: 1;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .payment-method:hover,
+        .payment-method.selected {
+            border-color: var(--primary);
+            background: rgba(200, 16, 46, 0.05);
+        }
+        
+        .payment-method i {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+            display: block;
+        }
+        
+        .place-order-btn {
+            grid-column: span 2;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 20px;
+        }
+        
+        .place-order-btn:hover {
+            background: #a00926;
+        }
+        
+        /* Login Section */
+        .login-section {
+            padding: 60px 0;
+            display: none;
+        }
+        
+        .login-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-header h2 {
+            font-size: 1.8rem;
+            color: var(--secondary);
+            margin-bottom: 10px;
+        }
+        
+        .login-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .login-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .login-tab.active {
+            border-bottom-color: var(--primary);
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .login-form {
+            display: none;
+        }
+        
+        .login-form.active {
+            display: block;
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 20px;
+        }
+        
+        .login-btn:hover {
+            background: #a00926;
+        }
+        
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--gray);
+        }
+        
+        .register-link a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+        
+        .status-message {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .status-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        /* Admin Section */
+        .admin-section {
+            padding: 60px 0;
+            display: none;
+        }
+        
+        .admin-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .admin-header h2 {
+            font-size: 1.8rem;
+            color: var(--admin);
+        }
+        
+        .admin-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .admin-tab {
+            padding: 15px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .admin-tab.active {
+            border-bottom-color: var(--admin);
+            color: var(--admin);
+            font-weight: 600;
+        }
+        
+        .admin-content {
+            display: none;
+        }
+        
+        .admin-content.active {
+            display: block;
+        }
+        
+        .admin-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .admin-btn {
+            padding: 10px 20px;
+            background: var(--admin);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .admin-btn:hover {
+            background: #218838;
+        }
+        
+        .admin-btn.secondary {
+            background: var(--secondary);
+        }
+        
+        .admin-btn.secondary:hover {
+            background: #111;
+        }
+        
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        .admin-table th,
+        .admin-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .admin-table th {
+            background: var(--light);
+            font-weight: 600;
+        }
+        
+        .admin-table tr:hover {
+            background: rgba(0,0,0,0.02);
+        }
+        
+        .action-btn {
+            padding: 5px 10px;
+            margin-right: 5px;
+            border: none;
+            border-radius: 3px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .edit-btn {
+            background: var(--seller);
+            color: white;
+        }
+        
+        .edit-btn:hover {
+            background: #0069d9;
+        }
+        
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .delete-btn:hover {
+            background: #c82333;
+        }
+        
+        .approve-btn {
+            background: var(--admin);
+            color: white;
+        }
+        
+        .approve-btn:hover {
+            background: #218838;
+        }
+        
+        /* Seller Section */
+        .seller-section {
+            padding: 60px 0;
+            display: none;
+        }
+        
+        .seller-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .seller-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .seller-header h2 {
+            font-size: 1.8rem;
+            color: var(--seller);
+        }
+        
+        .seller-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .seller-tab {
+            padding: 15px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .seller-tab.active {
+            border-bottom-color: var(--seller);
+            color: var(--seller);
+            font-weight: 600;
+        }
+        
+        .seller-content {
+            display: none;
+        }
+        
+        .seller-content.active {
+            display: block;
+        }
+        
+        .seller-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .seller-btn {
+            padding: 10px 20px;
+            background: var(--seller);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .seller-btn:hover {
+            background: #0069d9;
+        }
+        
+        .seller-btn.secondary {
+            background: var(--secondary);
+        }
+        
+        .seller-btn.secondary:hover {
+            background: #111;
+        }
+        
+        /* Product Form */
+        .product-form {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .image-upload {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .image-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .preview-item {
+            position: relative;
+            width: 100px;
+            height: 100px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .preview-remove {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        
+        .add-image-btn {
+            width: 100px;
+            height: 100px;
+            border: 2px dashed #ddd;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .add-image-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .add-image-btn i {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .spec-group {
+            margin-bottom: 15px;
+        }
+        
+        .spec-group h4 {
+            margin-bottom: 10px;
+            color: var(--secondary);
+        }
+        
+        .spec-item {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .size-inputs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .size-input {
+            width: 60px;
+        }
+        
+        /* Website Editor */
+        .website-editor {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .editor-section {
+            margin-bottom: 30px;
+        }
+        
+        .editor-section h3 {
+            margin-bottom: 15px;
+            color: var(--secondary);
+        }
+        
+        .hero-bg-preview {
+            width: 100%;
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        
+        .hero-bg-preview::after {
+            content: 'Hero Background Preview';
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-size: 0.8rem;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            color: var(--secondary);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+        
+        .modal-close:hover {
+            color: var(--dark);
+        }
+        
+        .modal-body {
+            padding: 20px;
+        }
+        
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .btn-cancel {
+            padding: 10px 20px;
+            background: var(--light);
+            color: var(--dark);
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-cancel:hover {
+            background: #e9ecef;
+        }
+        
+        .btn-save {
+            padding: 10px 20px;
+            background: var(--admin);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .btn-save:hover {
+            background: #218838;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--secondary);
+            color: white;
+            padding: 50px 0 20px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .footer-column h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 2px;
+            background: var(--primary);
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-column ul li a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-column ul li a:hover {
+            color: var(--primary);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-radius: 50%;
+            transition: background 0.3s;
+        }
+        
+        .social-links a:hover {
+            background: var(--primary);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .notification.success {
+            background: var(--admin);
+        }
+        
+        .notification.error {
+            background: #dc3545;
+        }
+        
+        /* Loading spinner */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+        }
+        
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(200, 16, 46, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .product-detail-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .checkout-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+            
+            .place-order-btn {
+                grid-column: span 1;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .logo {
+                margin-bottom: 15px;
+            }
+            
+            .slogan {
+                margin: 0 0 15px 0;
+            }
+            
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            nav ul li {
+                margin: 5px 10px;
+            }
+            
+            .user-menu {
+                margin-top: 10px;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.2rem;
+            }
+            
+            .product-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .cart-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .cart-item img {
+                margin-bottom: 15px;
+            }
+            
+            .cart-item-quantity {
+                margin: 10px 0;
+            }
+            
+            .product-detail-actions {
+                flex-direction: column;
+            }
+            
+            .admin-tabs,
+            .seller-tabs,
+            .login-tabs {
+                flex-direction: column;
+            }
+            
+            .admin-tab,
+            .seller-tab,
+            .login-tab {
+                border-bottom: none;
+                border-right: 2px solid transparent;
+            }
+            
+            .admin-tab.active,
+            .seller-tab.active,
+            .login-tab.active {
+                border-right-color: var(--admin);
+                border-bottom-color: transparent;
+            }
+            
+            .seller-tab.active {
+                border-right-color: var(--seller);
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .hero {
+                padding: 60px 15px;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .cart-item {
+                flex-direction: row;
+            }
+            
+            .cart-item img {
+                margin-bottom: 0;
+            }
+            
+            .admin-actions,
+            .seller-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <div>
+                <a href="#" class="logo">
+                    <i class="fas fa-shoe-prints"></i>
+                    RBM
+                </a>
+                <span class="slogan">Step Into Culture</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="nav-link active" data-section="home">Home</a></li>
+                    <li><a href="#" class="nav-link" data-section="shop">Shop</a></li>
+                    <li><a href="#" class="nav-link" data-section="about">About RBM</a></li>
+                    <li><a href="#" class="nav-link" data-section="contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-menu">
+                <a href="#" class="admin-link" id="admin-login-link" style="display: none;">Admin</a>
+                <a href="#" class="seller-link" id="seller-login-link">Seller Login</a>
+                <a href="#" class="seller-link" id="seller-register-link" style="display: none;">Register</a>
+                <a href="#" class="seller-link" id="seller-dashboard-link" style="display: none;">Dashboard</a>
+                <a href="#" class="admin-link" id="admin-dashboard-link" style="display: none;">Admin Panel</a>
+                <a href="#" class="seller-link" id="logout-link" style="display: none;">Logout</a>
+                <div class="cart-icon" id="cart-icon">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span class="cart-count" id="cart-count">0</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="container">
+            <h1 id="hero-title">RBM Shoes</h1>
+            <p id="hero-subtitle">Step Into Culture with our premium collection of footwear</p>
+            <div class="search-container">
+                <input type="text" class="search-bar" id="search-bar" placeholder="Search for shoes by name or price...">
+                <button class="search-btn" id="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products" id="home">
+        <div class="container">
+            <h2 class="section-title">Featured Shoes</h2>
+            <div class="category-filter" id="category-filter">
+                <button class="category-btn active" data-category="all">All Shoes</button>
+                <button class="category-btn" data-category="men">Men's Shoes</button>
+                <button class="category-btn" data-category="women">Women's Shoes</button>
+                <button class="category-btn" data-category="official">Official Shoes</button>
+            </div>
+            <div class="product-grid" id="product-grid">
+                <!-- Products will be dynamically inserted here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Detail Section -->
+    <section class="product-detail" id="product-detail">
+        <div class="container">
+            <div class="product-detail-container">
+                <div class="product-detail-content" id="product-detail-content">
+                    <!-- Product details will be dynamically inserted here -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Cart Section -->
+    <section class="cart-section" id="cart-section">
+        <div class="container">
+            <div class="cart-container">
+                <div class="cart-header">
+                    <h2>Your Shopping Cart</h2>
+                    <button class="checkout-btn" id="checkout-btn">Proceed to Checkout</button>
+                </div>
+                <div class="cart-items" id="cart-items">
+                    <!-- Cart items will be dynamically inserted here -->
+                </div>
+                <div class="cart-summary">
+                    <div>Total: <span id="cart-total">$0.00</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Checkout Section -->
+    <section class="checkout-section" id="checkout-section">
+        <div class="container">
+            <div class="checkout-container">
+                <div class="checkout-header">
+                    <h2>Checkout</h2>
+                </div>
+                <form class="checkout-form" id="checkout-form">
+                    <div class="form-group">
+                        <label for="first-name">First Name</label>
+                        <input type="text" id="first-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="last-name">Last Name</label>
+                        <input type="text" id="last-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone</label>
+                        <input type="tel" id="phone" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="address">Address</label>
+                        <input type="text" id="address" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="city">City</label>
+                        <input type="text" id="city" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="zip">ZIP Code</label>
+                        <input type="text" id="zip" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="country">Country</label>
+                        <select id="country" required>
+                            <option value="">Select Country</option>
+                            <option value="kenya">Kenya</option>
+                            <option value="usa">United States</option>
+                            <option value="uk">United Kingdom</option>
+                            <option value="canada">Canada</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Payment Method</label>
+                        <div class="payment-methods">
+                            <div class="payment-method selected" data-method="card">
+                                <i class="fas fa-credit-card"></i>
+                                <span>Credit Card</span>
+                            </div>
+                            <div class="payment-method" data-method="mpesa">
+                                <i class="fas fa-mobile-alt"></i>
+                                <span>M-Pesa</span>
+                            </div>
+                            <div class="payment-method" data-method="paypal">
+                                <i class="fab fa-paypal"></i>
+                                <span>PayPal</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="card-number">Card Number</label>
+                        <input type="text" id="card-number" placeholder="1234 5678 9012 3456" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="expiry">Expiry Date</label>
+                        <input type="text" id="expiry" placeholder="MM/YY" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cvv">CVV</label>
+                        <input type="text" id="cvv" placeholder="123" required>
+                    </div>
+                    <button type="submit" class="place-order-btn">Place Order</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Login Section -->
+    <section class="login-section" id="login-section">
+        <div class="container">
+            <div class="login-container">
+                <div class="login-header">
+                    <h2>Welcome Back</h2>
+                    <p>Please login to your account</p>
+                </div>
+                <div class="login-tabs">
+                    <div class="login-tab active" data-tab="admin">Admin Login</div>
+                    <div class="login-tab" data-tab="seller">Seller Login</div>
+                </div>
+                <form class="login-form active" id="admin-login-form">
+                    <div class="status-message" id="admin-login-message" style="display: none;"></div>
+                    <div class="form-group">
+                        <label for="admin-username">Username</label>
+                        <input type="text" id="admin-username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-password">Password</label>
+                        <input type="password" id="admin-password" required>
+                    </div>
+                    <button type="submit" class="login-btn">Admin Login</button>
+                </form>
+                <form class="login-form" id="seller-login-form">
+                    <div class="status-message" id="seller-login-message" style="display: none;"></div>
+                    <div class="form-group">
+                        <label for="seller-email">Email</label>
+                        <input type="email" id="seller-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="seller-password">Password</label>
+                        <input type="password" id="seller-password" required>
+                    </div>
+                    <button type="submit" class="login-btn">Seller Login</button>
+                    <div class="register-link">
+                        Don't have an account? <a href="#" id="show-register-form">Register here</a>
+                    </div>
+                </form>
+                <form class="login-form" id="seller-register-form">
+                    <div class="status-message" id="seller-register-message" style="display: none;"></div>
+                    <div class="form-group">
+                        <label for="register-name">Full Name</label>
+                        <input type="text" id="register-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-email">Email</label>
+                        <input type="email" id="register-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-phone">Phone</label>
+                        <input type="tel" id="register-phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-password">Password</label>
+                        <input type="password" id="register-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="register-confirm-password">Confirm Password</label>
+                        <input type="password" id="register-confirm-password" required>
+                    </div>
+                    <button type="submit" class="login-btn">Register</button>
+                    <div class="register-link">
+                        Already have an account? <a href="#" id="show-login-form">Login here</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admin Section -->
+    <section class="admin-section" id="admin-section">
+        <div class="container">
+            <div class="admin-container">
+                <div class="admin-header">
+                    <h2>Admin Panel</h2>
+                    <div>
+                        <span id="admin-welcome">Welcome, Admin</span>
+                    </div>
+                </div>
+                <div class="admin-tabs">
+                    <div class="admin-tab active" data-tab="dashboard">Dashboard</div>
+                    <div class="admin-tab" data-tab="sellers">Manage Sellers</div>
+                    <div class="admin-tab" data-tab="products">Manage Products</div>
+                    <div class="admin-tab" data-tab="website">Edit Website</div>
+                </div>
+                <div class="admin-content active" id="admin-dashboard">
+                    <h3>Dashboard Overview</h3>
+                    <div class="admin-actions">
+                        <button class="admin-btn" id="add-seller-btn">Add New Seller</button>
+                        <button class="admin-btn secondary" id="refresh-data-btn">Refresh Data</button>
+                    </div>
+                    <div class="admin-stats">
+                        <div class="admin-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Metric</th>
+                                        <th>Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Total Sellers</td>
+                                        <td id="total-sellers">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Total Products</td>
+                                        <td id="total-products">0</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Total Orders</td>
+                                        <td id="total-orders">0</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="admin-content" id="admin-sellers">
+                    <h3>Manage Sellers</h3>
+                    <div class="admin-actions">
+                        <button class="admin-btn" id="add-seller-btn-2">Add New Seller</button>
+                    </div>
+                    <div class="admin-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Products</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sellers-table-body">
+                                <!-- Sellers will be dynamically inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="admin-content" id="admin-products">
+                    <h3>Manage Products</h3>
+                    <div class="admin-actions">
+                        <button class="admin-btn" id="add-product-btn">Add New Product</button>
+                    </div>
+                    <div class="admin-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Image</th>
+                                    <th>Name</th>
+                                    <th>Category</th>
+                                    <th>Price (KES)</th>
+                                    <th>Seller</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="products-table-body">
+                                <!-- Products will be dynamically inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="admin-content" id="admin-website">
+                    <h3>Edit Website Content</h3>
+                    <div class="website-editor">
+                        <div class="editor-section">
+                            <h4>Hero Section</h4>
+                            <div class="form-group">
+                                <label for="hero-title-input">Hero Title</label>
+                                <input type="text" id="hero-title-input" value="RBM Shoes">
+                            </div>
+                            <div class="form-group">
+                                <label for="hero-subtitle-input">Hero Subtitle</label>
+                                <input type="text" id="hero-subtitle-input" value="Step Into Culture with our premium collection of footwear">
+                            </div>
+                            <div class="form-group">
+                                <label for="hero-bg-input">Hero Background Image URL</label>
+                                <input type="text" id="hero-bg-input" placeholder="https://example.com/image.jpg">
+                                <div class="hero-bg-preview" id="hero-bg-preview"></div>
+                            </div>
+                        </div>
+                        <div class="editor-section">
+                            <h4>Footer</h4>
+                            <div class="form-group">
+                                <label for="footer-about-input">About Text</label>
+                                <textarea id="footer-about-input">RBM Shoes is a premium footwear brand that combines style, comfort, and cultural heritage. Step into culture with our unique designs.</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="footer-contact-input">Contact Information</label>
+                                <textarea id="footer-contact-input">123 Culture Street, Nairobi, Kenya<br>Phone: +254 712 345 678<br>Email: info@rbmshoes.com</textarea>
+                            </div>
+                        </div>
+                        <button class="admin-btn" id="save-website-btn">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seller Section -->
+    <section class="seller-section" id="seller-section">
+        <div class="container">
+            <div class="seller-container">
+                <div class="seller-header">
+                    <h2>Seller Dashboard</h2>
+                    <div>
+                        <span id="seller-welcome">Welcome, Seller</span>
+                    </div>
+                </div>
+                <div class="seller-tabs">
+                    <div class="seller-tab active" data-tab="dashboard">Dashboard</div>
+                    <div class="seller-tab" data-tab="products">My Products</div>
+                    <div class="seller-tab" data-tab="add-product">Add Product</div>
+                </div>
+                <div class="seller-content active" id="seller-dashboard">
+                    <h3>Seller Dashboard</h3>
+                    <div class="seller-actions">
+                        <button class="seller-btn" id="seller-add-product-btn">Add New Product</button>
+                        <button class="seller-btn secondary" id="seller-refresh-btn">Refresh Data</button>
+                    </div>
+                    <div class="admin-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Metric</th>
+                                    <th>Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Total Products</td>
+                                    <td id="seller-total-products">0</td>
+                                </tr>
+                                <tr>
+                                    <td>Total Sales</td>
+                                    <td id="seller-total-sales">0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="seller-content" id="seller-products">
+                    <h3>My Products</h3>
+                    <div class="seller-actions">
+                        <button class="seller-btn" id="seller-add-product-btn-2">Add New Product</button>
+                    </div>
+                    <div class="admin-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Image</th>
+                                    <th>Name</th>
+                                    <th>Category</th>
+                                    <th>Price (KES)</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="seller-products-table-body">
+                                <!-- Products will be dynamically inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="seller-content" id="seller-add-product">
+                    <h3>Add New Product</h3>
+                    <div class="product-form">
+                        <div class="form-group">
+                            <label for="product-name">Product Name</label>
+                            <input type="text" id="product-name" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="product-price-kes">Price (KES)</label>
+                                <input type="number" id="product-price-kes" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="product-price-usd">Price (USD)</label>
+                                <input type="number" id="product-price-usd" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="product-category">Category</label>
+                            <select id="product-category" required>
+                                <option value="">Select Category</option>
+                                <option value="men">Men's Shoes</option>
+                                <option value="women">Women's Shoes</option>
+                                <option value="official">Official Shoes</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="product-description">Description</label>
+                            <textarea id="product-description" required></textarea>
+                        </div>
+                        <div class="image-upload">
+                            <label>Product Images</label>
+                            <div class="image-preview" id="product-image-preview">
+                                <!-- Image previews will be added here -->
+                            </div>
+                            <div class="add-image-btn" id="add-product-image-btn">
+                                <i class="fas fa-plus"></i>
+                                <span>Add Image</span>
+                                <input type="file" id="product-image-input" accept="image/*" style="display: none;">
+                            </div>
+                        </div>
+                        <div class="spec-group">
+                            <h4>Specifications</h4>
+                            <div id="product-specs">
+                                <div class="spec-item">
+                                    <input type="text" placeholder="Specification Name" class="spec-name">
+                                    <input type="text" placeholder="Specification Value" class="spec-value">
+                                </div>
+                            </div>
+                            <button type="button" class="seller-btn" id="add-spec-btn">Add Specification</button>
+                        </div>
+                        <div class="size-selector">
+                            <h4>Available Sizes</h4>
+                            <div class="size-inputs" id="product-size-inputs">
+                                <input type="text" class="size-input" placeholder="Size">
+                                <input type="text" class="size-input" placeholder="Size">
+                                <input type="text" class="size-input" placeholder="Size">
+                            </div>
+                        </div>
+                        <button type="button" class="seller-btn" id="save-product-btn">Save Product</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>About RBM</h3>
+                    <p id="footer-about-text">RBM Shoes is a premium footwear brand that combines style, comfort, and cultural heritage. Step into culture with our unique designs.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#" class="nav-link" data-section="home">Home</a></li>
+                        <li><a href="#" class="nav-link" data-section="shop">Shop</a></li>
+                        <li><a href="#" class="nav-link" data-section="about">About RBM</a></li>
+                        <li><a href="#" class="nav-link" data-section="contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Customer Service</h3>
+                    <ul>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Shipping Policy</a></li>
+                        <li><a href="#">Returns & Exchanges</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact Us</h3>
+                    <ul id="footer-contact-info">
+                        <li><i class="fas fa-map-marker-alt"></i> 123 Culture Street, Nairobi, Kenya</li>
+                        <li><i class="fas fa-phone"></i> +254 712 345 678</li>
+                        <li><i class="fas fa-envelope"></i> info@rbmshoes.com</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 RBM Shoes. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Edit Seller Modal -->
+    <div class="modal" id="edit-seller-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Seller</h3>
+                <button class="modal-close" id="close-seller-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-seller-form">
+                    <input type="hidden" id="edit-seller-id">
+                    <div class="form-group">
+                        <label for="edit-seller-name">Name</label>
+                        <input type="text" id="edit-seller-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-seller-email">Email</label>
+                        <input type="email" id="edit-seller-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-seller-phone">Phone</label>
+                        <input type="tel" id="edit-seller-phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-seller-status">Status</label>
+                        <select id="edit-seller-status">
+                            <option value="active">Active</option>
+                            <option value="pending">Pending</option>
+                            <option value="suspended">Suspended</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-seller-password">Password (leave blank to keep current)</label>
+                        <input type="password" id="edit-seller-password">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" id="cancel-seller-edit">Cancel</button>
+                <button class="btn-save" id="save-seller-changes">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Product Modal -->
+    <div class="modal" id="edit-product-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Product</h3>
+                <button class="modal-close" id="close-product-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-product-form">
+                    <input type="hidden" id="edit-product-id">
+                    <div class="form-group">
+                        <label for="edit-product-name">Product Name</label>
+                        <input type="text" id="edit-product-name" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="edit-product-price-kes">Price (KES)</label>
+                            <input type="number" id="edit-product-price-kes" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-product-price-usd">Price (USD)</label>
+                            <input type="number" id="edit-product-price-usd" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-product-category">Category</label>
+                        <select id="edit-product-category" required>
+                            <option value="">Select Category</option>
+                            <option value="men">Men's Shoes</option>
+                            <option value="women">Women's Shoes</option>
+                            <option value="official">Official Shoes</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-product-description">Description</label>
+                        <textarea id="edit-product-description" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-product-image">Main Image URL</label>
+                        <input type="text" id="edit-product-image" required>
+                    </div>
+                    <div class="spec-group">
+                        <h4>Specifications</h4>
+                        <div id="edit-product-specs">
+                            <!-- Specifications will be dynamically added here -->
+                        </div>
+                        <button type="button" class="seller-btn" id="add-edit-spec-btn">Add Specification</button>
+                    </div>
+                    <div class="size-selector">
+                        <h4>Available Sizes</h4>
+                        <div class="size-inputs" id="edit-product-size-inputs">
+                            <!-- Sizes will be dynamically added here -->
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" id="cancel-product-edit">Cancel</button>
+                <button class="btn-save" id="save-product-changes">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        Item added to cart!
+    </div>
+
+    <script>
+        // Sample product data with categories, descriptions, specifications, and sizes
+        const products = [
+            // Men's Shoes
+            {
+                id: 1,
+                name: "Urban Explorer",
+                price: 4500,
+                priceUSD: 35,
+                category: "men",
+                image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                images: [
+                    "https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                ],
+                description: "The Urban Explorer is designed for the modern man who values both style and comfort. These shoes feature a sleek design with premium materials that provide all-day comfort. Perfect for city walks, casual outings, and everyday wear.",
+                specifications: {
+                    "Material": "Genuine Leather",
+                    "Sole Type": "Rubber",
+                    "Closure": "Lace-up",
+                    "Heel Type": "Flat",
+                    "Toe Style": "Round",
+                    "Color": "Black/Brown"
+                },
+                sizes: ["7", "8", "9", "10", "11", "12"],
+                sellerId: null
+            },
+            {
+                id: 2,
+                name: "City Walker",
+                price: 3800,
+                priceUSD: 30,
+                category: "men",
+                image: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                images: [
+                    "https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                ],
+                description: "City Walker shoes are engineered for urban exploration. With their lightweight construction and breathable materials, they keep your feet comfortable during long walks through the city. The versatile design complements both casual and smart-casual outfits.",
+                specifications: {
+                    "Material": "Synthetic Leather",
+                    "Sole Type": "TPR",
+                    "Closure": "Slip-on",
+                    "Heel Type": "Flat",
+                    "Toe Style": "Round",
+                    "Color": "Gray/White"
+                },
+                sizes: ["7", "8", "9", "10", "11"],
+                sellerId: null
+            },
+            {
+                id: 3,
+                name: "Heritage Runner",
+                price: 5200,
+                priceUSD: 40,
+                category: "men",
+                image: "https://images.unsplash.com/photo-1562183241-b937e955a905?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                images: [
+                    "https://images.unsplash.com/photo-1562183241-b937e955a905?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1562183241-b937e955a905?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1562183241-b937e955a905?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                ],
+                description: "Inspired by classic running shoes, the Heritage Runner combines retro aesthetics with modern comfort technology. These shoes feature a cushioned midsole and supportive upper, making them perfect for both athletic activities and casual wear.",
+                specifications: {
+                    "Material": "Mesh & Synthetic",
+                    "Sole Type": "EVA Foam",
+                    "Closure": "Lace-up",
+                    "Heel Type": "Low",
+                    "Toe Style": "Round",
+                    "Color": "Blue/White"
+                },
+                sizes: ["8", "9", "10", "11", "12"],
+                sellerId: null
+            },
+            {
+                id: 4,
+                name: "Culture Classic",
+                price: 4200,
+                priceUSD: 33,
+                category: "men",
+                image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                images: [
+                    "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                ],
+                description: "The Culture Classic celebrates traditional craftsmanship with a contemporary twist. These shoes feature hand-stitched details and premium materials that reflect our cultural heritage while providing modern comfort and durability.",
+                specifications: {
+                    "Material": "Full Grain Leather",
+                    "Sole Type": "Leather",
+                    "Closure": "Lace-up",
+                    "Heel Type": "Low",
+                    "Toe Style": "Round",
+                    "Color": "Brown/Tan"
+                },
+                sizes: ["7", "8", "9", "10", "11"],
+                sellerId: null
+            },
+            {
+                id: 5,
+                name: "Street Style",
+                price: 4900,
+                priceUSD: 38,
+                category: "men",
+                image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                images: [
+                    "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                ],
+                description: "Make a statement with Street Style shoes. Designed for the fashion-forward individual, these shoes feature bold design elements and premium materials that stand out in any urban setting. Perfect for those who want to express their unique style.",
+                specifications: {
+                    "Material": "Suede & Leather",
+                    "Sole Type": "Rubber",
+                    "Closure": "Lace-up",
+                    "Heel Type": "Low",
+                    "Toe Style": "Round",
+                    "Color": "Black/Red"
+                },
+                sizes: ["8", "9", "10", "11", "12"],
+                sellerId: null
+            },
+            
+            // Women's Shoes
+            {
+                id: 6,
+                name: "Urban Nomad",
+                price: 5500,
+                priceUSD: 42,
+                category: "women",
+                image: "https://images.unsplash.com/photo-1607522370275-f142068729ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                images: [
+                    "https://images.unsplash.com/photo-1607522370275-f142068729ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1607522370275-f142068729ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1607522370275-f142068729ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                ],
+                description: "Urban Nomad shoes are designed for the modern woman on the go. These versatile shoes combine comfort and style, making them perfect for everything from city exploration to casual outings. The sleek design complements any outfit.",
+                specifications: {
+                    "Material": "Synthetic Leather",
+                    "Sole Type": "Rubber",
+                    "Closure": "Slip-on",
+                    "Heel Type": "Low",
+                    "Toe Style": "Pointed",
+                    "Color": "Black/White"
+                },
+                sizes: ["5", "6", "7", "8", "9", "10"],
+                sellerId: null
+            },
+            {
+                id: 7,
+                name: "Heritage High",
+                price: 4800,
+                priceUSD: 37,
+                category: "women",
+                image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                images: [
+                    "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                ],
+                description: "Heritage High heels celebrate traditional craftsmanship with a modern twist. These elegant shoes feature premium materials and hand-finished details that reflect our cultural heritage. Perfect for special occasions or adding sophistication to any outfit.",
+                specifications: {
+                    "Material": "Patent Leather",
+                    "Sole Type": "Leather",
+                    "Closure": "Buckle",
+                    "Heel Type": "High (3.5 inches)",
+                    "Toe Style": "Pointed",
+                    "Color": "Black"
+                },
+                sizes: ["5", "6", "7", "8", "9"],
+                sellerId: null
+            },
+            {
+                id: 8,
+                name: "City Cruiser",
+                price: 4100,
+                priceUSD: 32,
+                category: "women",
+                image: "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                images: [
+                    "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                ],
+                description: "City Cruiser flats are designed for all-day comfort without sacrificing style. These lightweight shoes feature a flexible sole and breathable materials, making them perfect for busy days. The versatile design pairs well with both casual and professional outfits.",
+                specifications: {
+                    "Material": "Canvas",
+                    "Sole Type": "Rubber",
+                    "Closure": "Slip-on",
+                    "Heel Type": "Flat",
+                    "Toe Style": "Round",
+                    "Color": "Navy/White"
+                },
+                sizes: ["5", "6", "7", "8", "9", "10"],
+                sellerId: null
+            },
+            {
+                id: 9,
+                name: "Culture Court",
+                price: 5300,
+                priceUSD: 41,
+                category: "women",
+                image: "https://images.unsplash.com/photo-1512374382143-06378e054fda?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                images: [
+                    "https://images.unsplash.com/photo-1512374382143-06378e054fda?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1512374382143-06378e054fda?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1512374382143-06378e054fda?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                ],
+                description: "Culture Court sneakers blend traditional design elements with modern comfort. These shoes feature unique patterns and premium materials that tell a story of cultural heritage. Perfect for those who appreciate artistry in their footwear.",
+                specifications: {
+                    "Material": "Canvas & Leather",
+                    "Sole Type": "Rubber",
+                    "Closure": "Lace-up",
+                    "Heel Type": "Low",
+                    "Toe Style": "Round",
+                    "Color": "Multi-color"
+                },
+                sizes: ["6", "7", "8", "9", "10"],
+                sellerId: null
+            },
+            {
+                id: 10,
+                name: "Urban Trail",
+                price: 4700,
+                priceUSD: 36,
+                category: "women",
+                image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                images: [
+                    "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                ],
+                description: "Urban Trail shoes are designed for the adventurous woman. These rugged yet stylish shoes feature a durable sole and weather-resistant materials, making them perfect for both urban exploration and light outdoor activities. The versatile design adapts to any environment.",
+                specifications: {
+                    "Material": "Synthetic & Mesh",
+                    "Sole Type": "Rubber",
+                    "Closure": "Lace-up",
+                    "Heel Type": "Low",
+                    "Toe Style": "Round",
+                    "Color": "Olive/Black"
+                },
+                sizes: ["6", "7", "8", "9", "10"],
+                sellerId: null
+            },
+            
+            // Official Shoes
+            {
+                id: 11,
+                name: "Executive Oxford",
+                price: 6800,
+                priceUSD: 52,
+                category: "official",
+                image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                images: [
+                    "https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                ],
+                description: "The Executive Oxford is the epitome of professional footwear. Crafted from premium leather with meticulous attention to detail, these shoes exude sophistication and confidence. Perfect for board meetings, formal events, and any professional setting.",
+                specifications: {
+                    "Material": "Full Grain Leather",
+                    "Sole Type": "Leather",
+                    "Closure": "Lace-up",
+                    "Heel Type": "Low",
+                    "Toe Style": "Cap Toe",
+                    "Color": "Black"
+                },
+                sizes: ["7", "8", "9", "10", "11", "12"],
+                sellerId: null
+            },
+            {
+                id: 12,
+                name: "Business Derby",
+                price: 7200,
+                priceUSD: 55,
+                category: "official",
+                image: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                images: [
+                    "https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                ],
+                description: "Business Derby shoes combine classic design with modern comfort. These shoes feature a sleek silhouette and premium materials that make a statement in any professional environment. The versatile design transitions seamlessly from the office to after-work engagements.",
+                specifications: {
+                    "Material": "Calfskin Leather",
+                    "Sole Type": "Leather & Rubber",
+                    "Closure": "Lace-up",
+                    "Heel Type": "Low",
+                    "Toe Style": "Plain Toe",
+                    "Color": "Brown"
+                },
+                sizes: ["7", "8", "9", "10", "11"],
+                sellerId: null
+            },
+            {
+                id: 13,
+                name: "Corporate Loafer",
+                price: 6500,
+                priceUSD: 50,
+                category: "official",
+                image: "https://images.unsplash.com/photo-1562183241-b937e955a905?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                images: [
+                    "https://images.unsplash.com/photo-1562183241-b937e955a905?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1562183241-b937e955a905?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1562183241-b937e955a905?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                ],
+                description: "Corporate Loafers offer the perfect blend of comfort and professionalism. These slip-on shoes feature premium materials and a sophisticated design that's ideal for busy professionals. The easy-to-wear style doesn't compromise on elegance or quality.",
+                specifications: {
+                    "Material": "Suede Leather",
+                    "Sole Type": "Leather",
+                    "Closure": "Slip-on",
+                    "Heel Type": "Low",
+                    "Toe Style": "Moc Toe",
+                    "Color": "Dark Brown"
+                },
+                sizes: ["7", "8", "9", "10", "11"],
+                sellerId: null
+            },
+            {
+                id: 14,
+                name: "Professional Monk",
+                price: 7500,
+                priceUSD: 58,
+                category: "official",
+                image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                images: [
+                    "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                ],
+                description: "The Professional Monk strap shoe is a distinctive choice for the modern professional. Featuring a classic design with a contemporary twist, these shoes showcase exceptional craftsmanship and attention to detail. Perfect for making a sophisticated statement.",
+                specifications: {
+                    "Material": "Full Grain Leather",
+                    "Sole Type": "Leather",
+                    "Closure": "Monk Strap",
+                    "Heel Type": "Low",
+                    "Toe Style": "Plain Toe",
+                    "Color": "Black"
+                },
+                sizes: ["8", "9", "10", "11", "12"],
+                sellerId: null
+            },
+            {
+                id: 15,
+                name: "Formal Brogue",
+                price: 8200,
+                priceUSD: 63,
+                category: "official",
+                image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                images: [
+                    "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                    "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                ],
+                description: "Formal Brogue shoes represent the pinnacle of traditional craftsmanship. These shoes feature intricate perforations and detailing that showcase the art of shoemaking. Perfect for formal occasions and professional settings where attention to detail matters.",
+                specifications: {
+                    "Material": "Full Grain Leather",
+                    "Sole Type": "Leather",
+                    "Closure": "Lace-up",
+                    "Heel Type": "Low",
+                    "Toe Style": "Wingtip",
+                    "Color": "Tan/Brown"
+                },
+                sizes: ["7", "8", "9", "10", "11"],
+                sellerId: null
+            }
+        ];
+
+        // External product sources (simulated)
+        const externalSources = [
+            {
+                name: "Global Shoe Market",
+                url: "https://api.example.com/shoes",
+                products: [
+                    {
+                        id: 101,
+                        name: "Global Runner Pro",
+                        price: 6500,
+                        priceUSD: 50,
+                        category: "men",
+                        image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                        images: [
+                            "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                            "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                        ],
+                        description: "The Global Runner Pro is engineered for performance and style. These shoes feature advanced cushioning technology and a breathable upper that keeps your feet comfortable during long runs or busy days.",
+                        specifications: {
+                            "Material": "Mesh & Synthetic",
+                            "Sole Type": "Rubber",
+                            "Closure": "Lace-up",
+                            "Heel Type": "Low",
+                            "Toe Style": "Round",
+                            "Color": "Black/Red"
+                        },
+                        sizes: ["8", "9", "10", "11", "12"],
+                        sellerId: null
+                    },
+                    {
+                        id: 102,
+                        name: "International Walker",
+                        price: 5800,
+                        priceUSD: 45,
+                        category: "men",
+                        image: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                        images: [
+                            "https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                            "https://images.unsplash.com/photo-1560769629-975ec94e6a86?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                        ],
+                        description: "International Walker shoes are designed for global travelers. These versatile shoes feature a comfortable fit and durable construction that can handle any terrain. Perfect for business trips or vacations.",
+                        specifications: {
+                            "Material": "Leather & Synthetic",
+                            "Sole Type": "Rubber",
+                            "Closure": "Lace-up",
+                            "Heel Type": "Low",
+                            "Toe Style": "Round",
+                            "Color": "Brown/Tan"
+                        },
+                        sizes: ["7", "8", "9", "10", "11"],
+                        sellerId: null
+                    },
+                    {
+                        id: 103,
+                        name: "Elegant Heel",
+                        price: 6200,
+                        priceUSD: 48,
+                        category: "women",
+                        image: "https://images.unsplash.com/photo-1607522370275-f142068729ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                        images: [
+                            "https://images.unsplash.com/photo-1607522370275-f142068729ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                            "https://images.unsplash.com/photo-1607522370275-f142068729ff?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                        ],
+                        description: "Elegant Heel shoes are designed for special occasions. These sophisticated shoes feature a sleek design and premium materials that add a touch of glamour to any outfit. Perfect for weddings, parties, and formal events.",
+                        specifications: {
+                            "Material": "Satin",
+                            "Sole Type": "Leather",
+                            "Closure": "Ankle Strap",
+                            "Heel Type": "High (4 inches)",
+                            "Toe Style": "Pointed",
+                            "Color": "Silver"
+                        },
+                        sizes: ["5", "6", "7", "8", "9"],
+                        sellerId: null
+                    }
+                ]
+            },
+            {
+                name: "Premium Footwear Collection",
+                url: "https://api.example.com/premium-shoes",
+                products: [
+                    {
+                        id: 201,
+                        name: "Premium Heritage",
+                        price: 7200,
+                        priceUSD: 55,
+                        category: "official",
+                        image: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                        images: [
+                            "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                            "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                        ],
+                        description: "Premium Heritage shoes represent the finest in shoemaking tradition. These handcrafted shoes feature premium materials and meticulous attention to detail that's unmatched in the industry. Perfect for those who appreciate true luxury.",
+                        specifications: {
+                            "Material": "Exotic Leather",
+                            "Sole Type": "Leather",
+                            "Closure": "Lace-up",
+                            "Heel Type": "Low",
+                            "Toe Style": "Plain Toe",
+                            "Color": "Black"
+                        },
+                        sizes: ["8", "9", "10", "11", "12"],
+                        sellerId: null
+                    },
+                    {
+                        id: 202,
+                        name: "Luxury Urban",
+                        price: 8500,
+                        priceUSD: 65,
+                        category: "women",
+                        image: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                        images: [
+                            "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+                            "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+                        ],
+                        description: "Luxury Urban sneakers combine high-fashion design with everyday comfort. These limited-edition shoes feature unique materials and exclusive design elements that make them a must-have for fashion enthusiasts.",
+                        specifications: {
+                            "Material": "Premium Leather & Mesh",
+                            "Sole Type": "Rubber",
+                            "Closure": "Lace-up",
+                            "Heel Type": "Low",
+                            "Toe Style": "Round",
+                            "Color": "White/Gold"
+                        },
+                        sizes: ["6", "7", "8", "9", "10"],
+                        sellerId: null
+                    }
+                ]
+            }
+        ];
+
+        // Sellers data
+        let sellers = [
+            {
+                id: 1,
+                name: "John Doe",
+                email: "john@example.com",
+                phone: "+1234567890",
+                status: "active",
+                password: "password123" // In a real app, this would be hashed
+            },
+            {
+                id: 2,
+                name: "Jane Smith",
+                email: "jane@example.com",
+                phone: "+1234567891",
+                status: "active",
+                password: "password123" // In a real app, this would be hashed
+            }
+        ];
+
+        // Admin credentials
+        const adminCredentials = {
+            username: "admin",
+            password: "admin123"
+        };
+
+        // Cart functionality
+        let cart = [];
+        let allProducts = [...products];
+        let currentSection = 'home';
+        let activeCategory = 'all';
+        let selectedSize = null;
+        let currentProduct = null;
+        let currentUser = null;
+        let userRole = null;
+        let nextProductId = 1000;
+        let nextSellerId = 100;
+        let productImages = [];
+        let productSpecs = {};
+        let heroBackgroundImage = 'https://images.unsplash.com/photo-1549298916-b41d501d3772?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80';
+
+        // DOM elements
+        const productGrid = document.getElementById('product-grid');
+        const cartIcon = document.getElementById('cart-icon');
+        const cartCount = document.getElementById('cart-count');
+        const cartSection = document.getElementById('cart-section');
+        const cartItems = document.getElementById('cart-items');
+        const cartTotal = document.getElementById('cart-total');
+        const checkoutSection = document.getElementById('checkout-section');
+        const checkoutBtn = document.getElementById('checkout-btn');
+        const checkoutForm = document.getElementById('checkout-form');
+        const searchBar = document.getElementById('search-bar');
+        const searchBtn = document.getElementById('search-btn');
+        const notification = document.getElementById('notification');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sectionTitle = document.querySelector('.section-title');
+        const categoryFilter = document.getElementById('category-filter');
+        const categoryBtns = document.querySelectorAll('.category-btn');
+        const productDetail = document.getElementById('product-detail');
+        const productDetailContent = document.getElementById('product-detail-content');
+        const heroSection = document.getElementById('hero');
+        
+        // Login elements
+        const loginSection = document.getElementById('login-section');
+        const adminLoginForm = document.getElementById('admin-login-form');
+        const sellerLoginForm = document.getElementById('seller-login-form');
+        const sellerRegisterForm = document.getElementById('seller-register-form');
+        const loginTabs = document.querySelectorAll('.login-tab');
+        const loginForms = document.querySelectorAll('.login-form');
+        const adminLoginMessage = document.getElementById('admin-login-message');
+        const sellerLoginMessage = document.getElementById('seller-login-message');
+        const sellerRegisterMessage = document.getElementById('seller-register-message');
+        
+        // Admin elements
+        const adminSection = document.getElementById('admin-section');
+        const adminTabs = document.querySelectorAll('.admin-tab');
+        const adminContents = document.querySelectorAll('.admin-content');
+        const sellersTableBody = document.getElementById('sellers-table-body');
+        const productsTableBody = document.getElementById('products-table-body');
+        const adminWelcome = document.getElementById('admin-welcome');
+        
+        // Seller elements
+        const sellerSection = document.getElementById('seller-section');
+        const sellerTabs = document.querySelectorAll('.seller-tab');
+        const sellerContents = document.querySelectorAll('.seller-content');
+        const sellerProductsTableBody = document.getElementById('seller-products-table-body');
+        const sellerWelcome = document.getElementById('seller-welcome');
+        
+        // User menu elements
+        const adminLoginLink = document.getElementById('admin-login-link');
+        const sellerLoginLink = document.getElementById('seller-login-link');
+        const sellerRegisterLink = document.getElementById('seller-register-link');
+        const sellerDashboardLink = document.getElementById('seller-dashboard-link');
+        const adminDashboardLink = document.getElementById('admin-dashboard-link');
+        const logoutLink = document.getElementById('logout-link');
+        
+        // Website editor elements
+        const heroTitle = document.getElementById('hero-title');
+        const heroSubtitle = document.getElementById('hero-subtitle');
+        const heroTitleInput = document.getElementById('hero-title-input');
+        const heroSubtitleInput = document.getElementById('hero-subtitle-input');
+        const heroBgInput = document.getElementById('hero-bg-input');
+        const heroBgPreview = document.getElementById('hero-bg-preview');
+        const footerAboutText = document.getElementById('footer-about-text');
+        const footerAboutInput = document.getElementById('footer-about-input');
+        const footerContactInfo = document.getElementById('footer-contact-info');
+        const footerContactInput = document.getElementById('footer-contact-input');
+        
+        // Modal elements
+        const editSellerModal = document.getElementById('edit-seller-modal');
+        const editProductModal = document.getElementById('edit-product-modal');
+        const closeSellerModal = document.getElementById('close-seller-modal');
+        const closeProductModal = document.getElementById('close-product-modal');
+        const cancelSellerEdit = document.getElementById('cancel-seller-edit');
+        const cancelProductEdit = document.getElementById('cancel-product-edit');
+        const saveSellerChanges = document.getElementById('save-seller-changes');
+        const saveProductChanges = document.getElementById('save-product-changes');
+        const editSellerForm = document.getElementById('edit-seller-form');
+        const editProductForm = document.getElementById('edit-product-form');
+
+        // Initialize the app
+        function init() {
+            // Load data from localStorage if available
+            loadDataFromStorage();
+            
+            // Apply hero background image
+            heroSection.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('${heroBackgroundImage}')`;
+            
+            renderProducts();
+            updateCartCount();
+            updateUserMenu();
+            
+            // Event listeners
+            cartIcon.addEventListener('click', showCart);
+            checkoutBtn.addEventListener('click', showCheckout);
+            checkoutForm.addEventListener('submit', placeOrder);
+            searchBar.addEventListener('input', searchProducts);
+            searchBtn.addEventListener('click', performSearch);
+            
+            // Navigation
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const section = link.getAttribute('data-section');
+                    showSection(section);
+                    
+                    // Update active nav link
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                });
+            });
+            
+            // Category filter
+            categoryBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const category = btn.getAttribute('data-category');
+                    filterByCategory(category);
+                    
+                    // Update active category button
+                    categoryBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                });
+            });
+            
+            // Payment method selection
+            const paymentMethods = document.querySelectorAll('.payment-method');
+            paymentMethods.forEach(method => {
+                method.addEventListener('click', () => {
+                    paymentMethods.forEach(m => m.classList.remove('selected'));
+                    method.classList.add('selected');
+                });
+            });
+            
+            // Login tabs
+            loginTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabName = tab.getAttribute('data-tab');
+                    
+                    // Update active tab
+                    loginTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    // Show corresponding form
+                    loginForms.forEach(form => {
+                        form.classList.remove('active');
+                        if (form.id === `${tabName}-login-form` || 
+                            (tabName === 'admin' && form.id === 'admin-login-form') ||
+                            (tabName === 'seller' && form.id === 'seller-login-form')) {
+                            form.classList.add('active');
+                        }
+                    });
+                    
+                    // Hide status messages when switching tabs
+                    adminLoginMessage.style.display = 'none';
+                    sellerLoginMessage.style.display = 'none';
+                    sellerRegisterMessage.style.display = 'none';
+                });
+            });
+            
+            // Admin tabs
+            adminTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabName = tab.getAttribute('data-tab');
+                    
+                    // Update active tab
+                    adminTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    // Show corresponding content
+                    adminContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === `admin-${tabName}`) {
+                            content.classList.add('active');
+                        }
+                    });
+                });
+            });
+            
+            // Seller tabs
+            sellerTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabName = tab.getAttribute('data-tab');
+                    
+                    // Update active tab
+                    sellerTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    // Show corresponding content
+                    sellerContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === `seller-${tabName}`) {
+                            content.classList.add('active');
+                        }
+                    });
+                });
+            });
+            
+            // Login forms
+            adminLoginForm.addEventListener('submit', handleAdminLogin);
+            sellerLoginForm.addEventListener('submit', handleSellerLogin);
+            sellerRegisterForm.addEventListener('submit', handleSellerRegister);
+            
+            // User menu
+            adminLoginLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                showSection('login');
+            });
+            
+            sellerLoginLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                showSection('login');
+                // Switch to seller login tab
+                loginTabs.forEach(t => t.classList.remove('active'));
+                document.querySelector('[data-tab="seller"]').classList.add('active');
+                loginForms.forEach(form => form.classList.remove('active'));
+                sellerLoginForm.classList.add('active');
+            });
+            
+            sellerRegisterLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                showSection('login');
+                // Switch to seller register form
+                loginTabs.forEach(t => t.classList.remove('active'));
+                document.querySelector('[data-tab="seller"]').classList.add('active');
+                loginForms.forEach(form => form.classList.remove('active'));
+                sellerRegisterForm.classList.add('active');
+            });
+            
+            sellerDashboardLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                showSection('seller');
+                loadSellerDashboard();
+            });
+            
+            adminDashboardLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                showSection('admin');
+                loadAdminDashboard();
+            });
+            
+            logoutLink.addEventListener('click', handleLogout);
+            
+            // Admin buttons
+            document.getElementById('add-seller-btn').addEventListener('click', showAddSellerForm);
+            document.getElementById('add-seller-btn-2').addEventListener('click', showAddSellerForm);
+            document.getElementById('refresh-data-btn').addEventListener('click', loadAdminDashboard);
+            document.getElementById('add-product-btn').addEventListener('click', showAddProductForm);
+            document.getElementById('save-website-btn').addEventListener('click', saveWebsiteChanges);
+            
+            // Seller buttons
+            document.getElementById('seller-add-product-btn').addEventListener('click', () => {
+                sellerTabs.forEach(t => t.classList.remove('active'));
+                document.querySelector('[data-tab="add-product"]').classList.add('active');
+                sellerContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === 'seller-add-product') {
+                        content.classList.add('active');
+                    }
+                });
+            });
+            
+            document.getElementById('seller-add-product-btn-2').addEventListener('click', () => {
+                sellerTabs.forEach(t => t.classList.remove('active'));
+                document.querySelector('[data-tab="add-product"]').classList.add('active');
+                sellerContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === 'seller-add-product') {
+                        content.classList.add('active');
+                    }
+                });
+            });
+            
+            document.getElementById('seller-refresh-btn').addEventListener('click', loadSellerDashboard);
+            
+            // Product form
+            document.getElementById('add-product-image-btn').addEventListener('click', () => {
+                document.getElementById('product-image-input').click();
+            });
+            
+            document.getElementById('product-image-input').addEventListener('change', handleProductImageUpload);
+            document.getElementById('add-spec-btn').addEventListener('click', addSpecificationRow);
+            document.getElementById('save-product-btn').addEventListener('click', saveProduct);
+            
+            // Show/hide register form links
+            document.getElementById('show-register-form').addEventListener('click', (e) => {
+                e.preventDefault();
+                loginForms.forEach(form => form.classList.remove('active'));
+                sellerRegisterForm.classList.add('active');
+            });
+            
+            document.getElementById('show-login-form').addEventListener('click', (e) => {
+                e.preventDefault();
+                loginForms.forEach(form => form.classList.remove('active'));
+                sellerLoginForm.classList.add('active');
+            });
+            
+            // Modal event listeners
+            closeSellerModal.addEventListener('click', () => {
+                editSellerModal.classList.remove('active');
+            });
+            
+            closeProductModal.addEventListener('click', () => {
+                editProductModal.classList.remove('active');
+            });
+            
+            cancelSellerEdit.addEventListener('click', () => {
+                editSellerModal.classList.remove('active');
+            });
+            
+            cancelProductEdit.addEventListener('click', () => {
+                editProductModal.classList.remove('active');
+            });
+            
+            saveSellerChanges.addEventListener('click', saveSellerEdit);
+            saveProductChanges.addEventListener('click', saveProductEdit);
+            
+            // Hero background input
+            heroBgInput.addEventListener('input', () => {
+                const url = heroBgInput.value;
+                if (url) {
+                    heroBgPreview.style.backgroundImage = `url('${url}')`;
+                } else {
+                    heroBgPreview.style.backgroundImage = '';
+                }
+            });
+            
+            // Add edit specification button
+            document.getElementById('add-edit-spec-btn').addEventListener('click', addEditSpecificationRow);
+        }
+
+        // Load data from localStorage
+        function loadDataFromStorage() {
+            const savedProducts = localStorage.getItem('rbmProducts');
+            if (savedProducts) {
+                allProducts = JSON.parse(savedProducts);
+            }
+            
+            const savedSellers = localStorage.getItem('rbmSellers');
+            if (savedSellers) {
+                sellers = JSON.parse(savedSellers);
+            }
+            
+            const savedNextProductId = localStorage.getItem('rbmNextProductId');
+            if (savedNextProductId) {
+                nextProductId = parseInt(savedNextProductId);
+            }
+            
+            const savedNextSellerId = localStorage.getItem('rbmNextSellerId');
+            if (savedNextSellerId) {
+                nextSellerId = parseInt(savedNextSellerId);
+            }
+            
+            const savedWebsiteContent = localStorage.getItem('rbmWebsiteContent');
+            if (savedWebsiteContent) {
+                const websiteContent = JSON.parse(savedWebsiteContent);
+                heroTitle.textContent = websiteContent.heroTitle || "RBM Shoes";
+                heroSubtitle.textContent = websiteContent.heroSubtitle || "Step Into Culture with our premium collection of footwear";
+                footerAboutText.textContent = websiteContent.footerAbout || "RBM Shoes is a premium footwear brand that combines style, comfort, and cultural heritage. Step into culture with our unique designs.";
+                footerContactInfo.innerHTML = websiteContent.footerContact || `
+                    <li><i class="fas fa-map-marker-alt"></i> 123 Culture Street, Nairobi, Kenya</li>
+                    <li><i class="fas fa-phone"></i> +254 712 345 678</li>
+                    <li><i class="fas fa-envelope"></i> info@rbmshoes.com</li>
+                `;
+                heroBackgroundImage = websiteContent.heroBg || heroBackgroundImage;
+            }
+        }
+
+        // Save data to localStorage
+        function saveDataToStorage() {
+            localStorage.setItem('rbmProducts', JSON.stringify(allProducts));
+            localStorage.setItem('rbmSellers', JSON.stringify(sellers));
+            localStorage.setItem('rbmNextProductId', nextProductId.toString());
+            localStorage.setItem('rbmNextSellerId', nextSellerId.toString());
+        }
+
+        // Update user menu based on login status
+        function updateUserMenu() {
+            if (currentUser) {
+                adminLoginLink.style.display = 'none';
+                sellerLoginLink.style.display = 'none';
+                sellerRegisterLink.style.display = 'none';
+                sellerDashboardLink.style.display = 'inline-block';
+                logoutLink.style.display = 'inline-block';
+                
+                if (userRole === 'admin') {
+                    adminDashboardLink.style.display = 'inline-block';
+                    sellerDashboardLink.style.display = 'none';
+                } else {
+                    adminDashboardLink.style.display = 'none';
+                    sellerDashboardLink.style.display = 'inline-block';
+                }
+            } else {
+                adminLoginLink.style.display = 'inline-block';
+                sellerLoginLink.style.display = 'inline-block';
+                sellerRegisterLink.style.display = 'inline-block';
+                sellerDashboardLink.style.display = 'none';
+                adminDashboardLink.style.display = 'none';
+                logoutLink.style.display = 'none';
+            }
+        }
+
+        // Handle admin login
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('admin-username').value;
+            const password = document.getElementById('admin-password').value;
+            
+            if (username === adminCredentials.username && password === adminCredentials.password) {
+                currentUser = { username, role: 'admin' };
+                userRole = 'admin';
+                updateUserMenu();
+                showNotification('Admin login successful!', 'success');
+                showSection('admin');
+                loadAdminDashboard();
+                
+                // Reset form
+                adminLoginForm.reset();
+                adminLoginMessage.style.display = 'none';
+            } else {
+                adminLoginMessage.textContent = 'Invalid admin credentials!';
+                adminLoginMessage.className = 'status-message error';
+                adminLoginMessage.style.display = 'block';
+            }
+        }
+
+        // Handle seller login
+        function handleSellerLogin(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('seller-email').value;
+            const password = document.getElementById('seller-password').value;
+            
+            // Find seller by email
+            const seller = sellers.find(s => s.email === email);
+            
+            if (seller && seller.password === password && seller.status === 'active') {
+                currentUser = seller;
+                userRole = 'seller';
+                updateUserMenu();
+                showNotification('Seller login successful!', 'success');
+                showSection('seller');
+                loadSellerDashboard();
+                
+                // Reset form
+                sellerLoginForm.reset();
+                sellerLoginMessage.style.display = 'none';
+            } else if (seller && seller.password === password && seller.status !== 'active') {
+                sellerLoginMessage.textContent = 'Your account is pending approval. Please wait for admin approval.';
+                sellerLoginMessage.className = 'status-message error';
+                sellerLoginMessage.style.display = 'block';
+            } else {
+                sellerLoginMessage.textContent = 'Invalid seller credentials!';
+                sellerLoginMessage.className = 'status-message error';
+                sellerLoginMessage.style.display = 'block';
+            }
+        }
+
+        // Handle seller registration
+        function handleSellerRegister(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('register-name').value;
+            const email = document.getElementById('register-email').value;
+            const phone = document.getElementById('register-phone').value;
+            const password = document.getElementById('register-password').value;
+            const confirmPassword = document.getElementById('register-confirm-password').value;
+            
+            // Check if passwords match
+            if (password !== confirmPassword) {
+                sellerRegisterMessage.textContent = 'Passwords do not match!';
+                sellerRegisterMessage.className = 'status-message error';
+                sellerRegisterMessage.style.display = 'block';
+                return;
+            }
+            
+            // Check if email already exists
+            if (sellers.some(s => s.email === email)) {
+                sellerRegisterMessage.textContent = 'Email already registered!';
+                sellerRegisterMessage.className = 'status-message error';
+                sellerRegisterMessage.style.display = 'block';
+                return;
+            }
+            
+            // Create new seller
+            const newSeller = {
+                id: nextSellerId++,
+                name,
+                email,
+                phone,
+                password: password, // In a real app, this would be hashed
+                status: 'pending' // Pending admin approval
+            };
+            
+            sellers.push(newSeller);
+            saveDataToStorage();
+            
+            sellerRegisterMessage.textContent = 'Registration successful! Please wait for admin approval.';
+            sellerRegisterMessage.className = 'status-message success';
+            sellerRegisterMessage.style.display = 'block';
+            
+            // Reset form
+            sellerRegisterForm.reset();
+            
+            // Switch to login form after a delay
+            setTimeout(() => {
+                loginForms.forEach(form => form.classList.remove('active'));
+                sellerLoginForm.classList.add('active');
+                sellerRegisterMessage.style.display = 'none';
+            }, 3000);
+        }
+
+        // Handle logout
+        function handleLogout(e) {
+            e.preventDefault();
+            
+            currentUser = null;
+            userRole = null;
+            updateUserMenu();
+            showNotification('Logged out successfully!', 'success');
+            showSection('home');
+        }
+
+        // Load admin dashboard
+        function loadAdminDashboard() {
+            // Update welcome message
+            adminWelcome.textContent = `Welcome, ${currentUser.username}`;
+            
+            // Update stats
+            document.getElementById('total-sellers').textContent = sellers.length;
+            document.getElementById('total-products').textContent = allProducts.length;
+            document.getElementById('total-orders').textContent = '0'; // Placeholder
+            
+            // Load sellers table
+            loadSellersTable();
+            
+            // Load products table
+            loadProductsTable();
+            
+            // Load website editor
+            heroTitleInput.value = heroTitle.textContent;
+            heroSubtitleInput.value = heroSubtitle.textContent;
+            heroBgInput.value = heroBackgroundImage;
+            heroBgPreview.style.backgroundImage = `url('${heroBackgroundImage}')`;
+            footerAboutInput.value = footerAboutText.textContent;
+            footerContactInput.value = footerContactInfo.innerText;
+        }
+
+        // Load sellers table
+        function loadSellersTable() {
+            sellersTableBody.innerHTML = '';
+            
+            sellers.forEach(seller => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${seller.id}</td>
+                    <td>${seller.name}</td>
+                    <td>${seller.email}</td>
+                    <td>${seller.phone}</td>
+                    <td>${allProducts.filter(p => p.sellerId === seller.id).length}</td>
+                    <td>${seller.status}</td>
+                    <td>
+                        <button class="action-btn edit-btn" data-id="${seller.id}">Edit</button>
+                        <button class="action-btn delete-btn" data-id="${seller.id}">Delete</button>
+                        ${seller.status === 'pending' ? `<button class="action-btn approve-btn" data-id="${seller.id}" data-action="approve">Approve</button>` : ''}
+                    </td>
+                `;
+                
+                sellersTableBody.appendChild(row);
+            });
+            
+            // Add event listeners to buttons
+            document.querySelectorAll('#sellers-table-body .action-btn').forEach(btn => {
+                btn.addEventListener('click', handleSellerAction);
+            });
+        }
+
+        // Handle seller actions (edit, delete, approve)
+        function handleSellerAction(e) {
+            const sellerId = parseInt(e.target.getAttribute('data-id'));
+            const action = e.target.getAttribute('data-action');
+            
+            if (action === 'approve') {
+                // Approve seller
+                const seller = sellers.find(s => s.id === sellerId);
+                if (seller) {
+                    seller.status = 'active';
+                    saveDataToStorage();
+                    loadSellersTable();
+                    showNotification('Seller approved successfully!', 'success');
+                }
+            } else if (e.target.classList.contains('edit-btn')) {
+                // Edit seller
+                showEditSellerForm(sellerId);
+            } else if (e.target.classList.contains('delete-btn')) {
+                // Delete seller
+                if (confirm('Are you sure you want to delete this seller?')) {
+                    sellers = sellers.filter(s => s.id !== sellerId);
+                    saveDataToStorage();
+                    loadSellersTable();
+                    showNotification('Seller deleted successfully!', 'success');
+                }
+            }
+        }
+
+        // Show edit seller form
+        function showEditSellerForm(sellerId) {
+            const seller = sellers.find(s => s.id === sellerId);
+            if (!seller) return;
+            
+            // Populate form
+            document.getElementById('edit-seller-id').value = seller.id;
+            document.getElementById('edit-seller-name').value = seller.name;
+            document.getElementById('edit-seller-email').value = seller.email;
+            document.getElementById('edit-seller-phone').value = seller.phone;
+            document.getElementById('edit-seller-status').value = seller.status;
+            document.getElementById('edit-seller-password').value = '';
+            
+            // Show modal
+            editSellerModal.classList.add('active');
+        }
+
+        // Save seller edit
+        function saveSellerEdit() {
+            const sellerId = parseInt(document.getElementById('edit-seller-id').value);
+            const name = document.getElementById('edit-seller-name').value;
+            const email = document.getElementById('edit-seller-email').value;
+            const phone = document.getElementById('edit-seller-phone').value;
+            const status = document.getElementById('edit-seller-status').value;
+            const password = document.getElementById('edit-seller-password').value;
+            
+            // Find seller
+            const seller = sellers.find(s => s.id === sellerId);
+            if (!seller) return;
+            
+            // Update seller data
+            seller.name = name;
+            seller.email = email;
+            seller.phone = phone;
+            seller.status = status;
+            
+            if (password) {
+                seller.password = password;
+            }
+            
+            // Save to storage
+            saveDataToStorage();
+            
+            // Close modal
+            editSellerModal.classList.remove('active');
+            
+            // Reload table
+            loadSellersTable();
+            
+            // Show notification
+            showNotification('Seller updated successfully!', 'success');
+        }
+
+        // Load products table
+        function loadProductsTable() {
+            productsTableBody.innerHTML = '';
+            
+            allProducts.forEach(product => {
+                const seller = sellers.find(s => s.id === product.sellerId);
+                const sellerName = seller ? seller.name : 'RBM';
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${product.id}</td>
+                    <td><img src="${product.image}" alt="${product.name}" width="50"></td>
+                    <td>${product.name}</td>
+                    <td>${product.category}</td>
+                    <td>${product.price.toLocaleString()}</td>
+                    <td>${sellerName}</td>
+                    <td>
+                        <button class="action-btn edit-btn" data-id="${product.id}">Edit</button>
+                        <button class="action-btn delete-btn" data-id="${product.id}">Delete</button>
+                    </td>
+                `;
+                
+                productsTableBody.appendChild(row);
+            });
+            
+            // Add event listeners to buttons
+            document.querySelectorAll('#products-table-body .action-btn').forEach(btn => {
+                btn.addEventListener('click', handleProductAction);
+            });
+        }
+
+        // Handle product actions (edit, delete)
+        function handleProductAction(e) {
+            const productId = parseInt(e.target.getAttribute('data-id'));
+            
+            if (e.target.classList.contains('edit-btn')) {
+                // Edit product
+                showEditProductForm(productId);
+            } else if (e.target.classList.contains('delete-btn')) {
+                // Delete product
+                if (confirm('Are you sure you want to delete this product?')) {
+                    allProducts = allProducts.filter(p => p.id !== productId);
+                    saveDataToStorage();
+                    loadProductsTable();
+                    showNotification('Product deleted successfully!', 'success');
+                }
+            }
+        }
+
+        // Show edit product form
+        function showEditProductForm(productId) {
+            const product = allProducts.find(p => p.id === productId);
+            if (!product) return;
+            
+            // Populate form
+            document.getElementById('edit-product-id').value = product.id;
+            document.getElementById('edit-product-name').value = product.name;
+            document.getElementById('edit-product-price-kes').value = product.price;
+            document.getElementById('edit-product-price-usd').value = product.priceUSD;
+            document.getElementById('edit-product-category').value = product.category;
+            document.getElementById('edit-product-description').value = product.description;
+            document.getElementById('edit-product-image').value = product.image;
+            
+            // Populate specifications
+            const specsContainer = document.getElementById('edit-product-specs');
+            specsContainer.innerHTML = '';
+            
+            Object.entries(product.specifications).forEach(([key, value]) => {
+                const specItem = document.createElement('div');
+                specItem.className = 'spec-item';
+                specItem.innerHTML = `
+                    <input type="text" value="${key}" class="spec-name">
+                    <input type="text" value="${value}" class="spec-value">
+                `;
+                specsContainer.appendChild(specItem);
+            });
+            
+            // Populate sizes
+            const sizesContainer = document.getElementById('edit-product-size-inputs');
+            sizesContainer.innerHTML = '';
+            
+            product.sizes.forEach(size => {
+                const sizeInput = document.createElement('input');
+                sizeInput.type = 'text';
+                sizeInput.className = 'size-input';
+                sizeInput.value = size;
+                sizesContainer.appendChild(sizeInput);
+            });
+            
+            // Show modal
+            editProductModal.classList.add('active');
+        }
+
+        // Add edit specification row
+        function addEditSpecificationRow() {
+            const specsContainer = document.getElementById('edit-product-specs');
+            const specItem = document.createElement('div');
+            specItem.className = 'spec-item';
+            specItem.innerHTML = `
+                <input type="text" placeholder="Specification Name" class="spec-name">
+                <input type="text" placeholder="Specification Value" class="spec-value">
+            `;
+            specsContainer.appendChild(specItem);
+        }
+
+        // Save product edit
+        function saveProductEdit() {
+            const productId = parseInt(document.getElementById('edit-product-id').value);
+            const name = document.getElementById('edit-product-name').value;
+            const priceKES = parseInt(document.getElementById('edit-product-price-kes').value);
+            const priceUSD = parseInt(document.getElementById('edit-product-price-usd').value);
+            const category = document.getElementById('edit-product-category').value;
+            const description = document.getElementById('edit-product-description').value;
+            const image = document.getElementById('edit-product-image').value;
+            
+            // Find product
+            const product = allProducts.find(p => p.id === productId);
+            if (!product) return;
+            
+            // Update product data
+            product.name = name;
+            product.price = priceKES;
+            product.priceUSD = priceUSD;
+            product.category = category;
+            product.description = description;
+            product.image = image;
+            
+            // Update specifications
+            product.specifications = {};
+            document.querySelectorAll('#edit-product-specs .spec-item').forEach(item => {
+                const specName = item.querySelector('.spec-name').value;
+                const specValue = item.querySelector('.spec-value').value;
+                
+                if (specName && specValue) {
+                    product.specifications[specName] = specValue;
+                }
+            });
+            
+            // Update sizes
+            product.sizes = [];
+            document.querySelectorAll('#edit-product-size-inputs .size-input').forEach(input => {
+                const size = input.value.trim();
+                if (size) {
+                    product.sizes.push(size);
+                }
+            });
+            
+            // Save to storage
+            saveDataToStorage();
+            
+            // Close modal
+            editProductModal.classList.remove('active');
+            
+            // Reload table
+            loadProductsTable();
+            
+            // Show notification
+            showNotification('Product updated successfully!', 'success');
+        }
+
+        // Show add seller form (placeholder)
+        function showAddSellerForm() {
+            showNotification('Add seller form would be implemented here.', 'success');
+        }
+
+        // Show add product form (placeholder)
+        function showAddProductForm() {
+            showNotification('Add product form would be implemented here.', 'success');
+        }
+
+        // Save website changes
+        function saveWebsiteChanges() {
+            const websiteContent = {
+                heroTitle: heroTitleInput.value,
+                heroSubtitle: heroSubtitleInput.value,
+                heroBg: heroBgInput.value,
+                footerAbout: footerAboutInput.value,
+                footerContact: footerContactInput.value
+            };
+            
+            localStorage.setItem('rbmWebsiteContent', JSON.stringify(websiteContent));
+            
+            // Update live website
+            heroTitle.textContent = websiteContent.heroTitle;
+            heroSubtitle.textContent = websiteContent.heroSubtitle;
+            heroBackgroundImage = websiteContent.heroBg || heroBackgroundImage;
+            heroSection.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('${heroBackgroundImage}')`;
+            footerAboutText.textContent = websiteContent.footerAbout;
+            footerContactInfo.innerHTML = websiteContent.footerContact;
+            
+            showNotification('Website content updated successfully!', 'success');
+        }
+
+        // Load seller dashboard
+        function loadSellerDashboard() {
+            // Update welcome message
+            sellerWelcome.textContent = `Welcome, ${currentUser.name}`;
+            
+            // Update stats
+            const sellerProducts = allProducts.filter(p => p.sellerId === currentUser.id);
+            document.getElementById('seller-total-products').textContent = sellerProducts.length;
+            document.getElementById('seller-total-sales').textContent = '0'; // Placeholder
+            
+            // Load seller products table
+            loadSellerProductsTable();
+        }
+
+        // Load seller products table
+        function loadSellerProductsTable() {
+            sellerProductsTableBody.innerHTML = '';
+            
+            const sellerProducts = allProducts.filter(p => p.sellerId === currentUser.id);
+            
+            sellerProducts.forEach(product => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${product.id}</td>
+                    <td><img src="${product.image}" alt="${product.name}" width="50"></td>
+                    <td>${product.name}</td>
+                    <td>${product.category}</td>
+                    <td>${product.price.toLocaleString()}</td>
+                    <td>
+                        <button class="action-btn edit-btn" data-id="${product.id}">Edit</button>
+                        <button class="action-btn delete-btn" data-id="${product.id}">Delete</button>
+                    </td>
+                `;
+                
+                sellerProductsTableBody.appendChild(row);
+            });
+            
+            // Add event listeners to buttons
+            document.querySelectorAll('#seller-products-table-body .action-btn').forEach(btn => {
+                btn.addEventListener('click', handleSellerProductAction);
+            });
+        }
+
+        // Handle seller product actions (edit, delete)
+        function handleSellerProductAction(e) {
+            const productId = parseInt(e.target.getAttribute('data-id'));
+            
+            if (e.target.classList.contains('edit-btn')) {
+                // Edit product (placeholder)
+                showNotification('Edit product functionality would be implemented here.', 'success');
+            } else if (e.target.classList.contains('delete-btn')) {
+                // Delete product
+                if (confirm('Are you sure you want to delete this product?')) {
+                    allProducts = allProducts.filter(p => p.id !== productId);
+                    saveDataToStorage();
+                    loadSellerProductsTable();
+                    showNotification('Product deleted successfully!', 'success');
+                }
+            }
+        }
+
+        // Handle product image upload
+        function handleProductImageUpload(e) {
+            const files = e.target.files;
+            
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const reader = new FileReader();
+                
+                reader.onload = function(event) {
+                    const imageUrl = event.target.result;
+                    productImages.push(imageUrl);
+                    
+                    // Add preview
+                    const preview = document.createElement('div');
+                    preview.className = 'preview-item';
+                    preview.innerHTML = `
+                        <img src="${imageUrl}" alt="Product Image">
+                        <div class="preview-remove" data-index="${productImages.length - 1}">×</div>
+                    `;
+                    
+                    document.getElementById('product-image-preview').appendChild(preview);
+                    
+                    // Add event listener to remove button
+                    preview.querySelector('.preview-remove').addEventListener('click', function() {
+                        const index = parseInt(this.getAttribute('data-index'));
+                        productImages.splice(index, 1);
+                        preview.remove();
+                    });
+                };
+                
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Add specification row
+        function addSpecificationRow() {
+            const specGroup = document.getElementById('product-specs');
+            const specItem = document.createElement('div');
+            specItem.className = 'spec-item';
+            specItem.innerHTML = `
+                <input type="text" placeholder="Specification Name" class="spec-name">
+                <input type="text" placeholder="Specification Value" class="spec-value">
+            `;
+            specGroup.appendChild(specItem);
+        }
+
+        // Save product
+        function saveProduct() {
+            const name = document.getElementById('product-name').value;
+            const priceKES = parseInt(document.getElementById('product-price-kes').value);
+            const priceUSD = parseInt(document.getElementById('product-price-usd').value);
+            const category = document.getElementById('product-category').value;
+            const description = document.getElementById('product-description').value;
+            
+            // Validate required fields
+            if (!name || !priceKES || !priceUSD || !category || !description) {
+                showNotification('Please fill in all required fields!', 'error');
+                return;
+            }
+            
+            // Validate images
+            if (productImages.length === 0) {
+                showNotification('Please upload at least one product image!', 'error');
+                return;
+            }
+            
+            // Collect specifications
+            const specifications = {};
+            document.querySelectorAll('#product-specs .spec-item').forEach(item => {
+                const specName = item.querySelector('.spec-name').value;
+                const specValue = item.querySelector('.spec-value').value;
+                
+                if (specName && specValue) {
+                    specifications[specName] = specValue;
+                }
+            });
+            
+            // Collect sizes
+            const sizes = [];
+            document.querySelectorAll('#product-size-inputs .size-input').forEach(input => {
+                const size = input.value.trim();
+                if (size) {
+                    sizes.push(size);
+                }
+            });
+            
+            // Create new product
+            const newProduct = {
+                id: nextProductId++,
+                name,
+                price: priceKES,
+                priceUSD,
+                category,
+                image: productImages[0], // Use first image as main image
+                images: [...productImages],
+                description,
+                specifications,
+                sizes,
+                sellerId: currentUser.id
+            };
+            
+            // Add to products
+            allProducts.push(newProduct);
+            saveDataToStorage();
+            
+            // Show success message
+            showNotification('Product added successfully!', 'success');
+            
+            // Reset form
+            document.getElementById('product-name').value = '';
+            document.getElementById('product-price-kes').value = '';
+            document.getElementById('product-price-usd').value = '';
+            document.getElementById('product-category').value = '';
+            document.getElementById('product-description').value = '';
+            document.getElementById('product-image-preview').innerHTML = '';
+            document.getElementById('product-specs').innerHTML = `
+                <div class="spec-item">
+                    <input type="text" placeholder="Specification Name" class="spec-name">
+                    <input type="text" placeholder="Specification Value" class="spec-value">
+                </div>
+            `;
+            document.querySelectorAll('#product-size-inputs .size-input').forEach(input => {
+                input.value = '';
+            });
+            
+            // Clear product images
+            productImages = [];
+            
+            // Switch to products tab
+            sellerTabs.forEach(t => t.classList.remove('active'));
+            document.querySelector('[data-tab="products"]').classList.add('active');
+            sellerContents.forEach(content => {
+                content.classList.remove('active');
+                if (content.id === 'seller-products') {
+                    content.classList.add('active');
+                }
+            });
+            
+            // Reload products table
+            loadSellerProductsTable();
+        }
+
+        // Render products
+        function renderProducts(productsToRender = allProducts) {
+            productGrid.innerHTML = '';
+            
+            if (productsToRender.length === 0) {
+                productGrid.innerHTML = `
+                    <div style="grid-column: span 3; text-align: center; padding: 40px;">
+                        <h3>No products found</h3>
+                        <p>Try a different search term or category</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            productsToRender.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.innerHTML = `
+                    <div class="product-img">
+                        <img src="${product.image}" alt="${product.name}">
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">${product.name}</h3>
+                        <div class="product-price">
+                            <span class="price">KES ${product.price.toLocaleString()}</span>
+                            <span class="price-usd">($${product.priceUSD})</span>
+                        </div>
+                        <button class="view-details" data-id="${product.id}">View Details</button>
+                    </div>
+                `;
+                
+                productGrid.appendChild(productCard);
+                
+                // View details button event
+                const viewDetailsBtn = productCard.querySelector('.view-details');
+                viewDetailsBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    showProductDetail(product.id);
+                });
+                
+                // Make entire card clickable
+                productCard.addEventListener('click', () => {
+                    showProductDetail(product.id);
+                });
+            });
+        }
+
+        // Show product detail
+        function showProductDetail(productId) {
+            const product = allProducts.find(p => p.id === productId);
+            if (!product) return;
+            
+            currentProduct = product;
+            selectedSize = null;
+            
+            // Hide all sections
+            hideAllSections();
+            
+            // Show product detail section
+            productDetail.style.display = 'block';
+            
+            // Populate product detail content
+            productDetailContent.innerHTML = `
+                <div class="product-detail-images">
+                    <div class="main-image">
+                        <img src="${product.images[0]}" alt="${product.name}" id="main-product-image">
+                    </div>
+                    <div class="thumbnail-images">
+                        ${product.images.map((img, index) => `
+                            <div class="thumbnail ${index === 0 ? 'active' : ''}" data-index="${index}">
+                                <img src="${img}" alt="${product.name}">
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="product-detail-info">
+                    <h1>${product.name}</h1>
+                    <div class="product-detail-price">KES ${product.price.toLocaleString()} ($${product.priceUSD})</div>
+                    <div class="product-detail-description">
+                        ${product.description}
+                    </div>
+                    <div class="product-specs">
+                        <h3>Specifications</h3>
+                        <ul class="specs-list">
+                            ${Object.entries(product.specifications).map(([key, value]) => `
+                                <li><strong>${key}:</strong> ${value}</li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                    <div class="size-selector">
+                        <h3>Select Size</h3>
+                        <div class="size-options">
+                            ${product.sizes.map(size => `
+                                <div class="size-option" data-size="${size}">${size}</div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div class="product-detail-actions">
+                        <button class="add-to-cart-detail" id="add-to-cart-detail">Add to Cart</button>
+                        <button class="back-btn" id="back-to-products">Back to Products</button>
+                    </div>
+                </div>
+            `;
+            
+            // Add event listeners for thumbnails
+            const thumbnails = productDetailContent.querySelectorAll('.thumbnail');
+            const mainImage = document.getElementById('main-product-image');
+            
+            thumbnails.forEach(thumbnail => {
+                thumbnail.addEventListener('click', () => {
+                    const index = thumbnail.getAttribute('data-index');
+                    mainImage.src = product.images[index];
+                    
+                    // Update active thumbnail
+                    thumbnails.forEach(t => t.classList.remove('active'));
+                    thumbnail.classList.add('active');
+                });
+            });
+            
+            // Add event listeners for size options
+            const sizeOptions = productDetailContent.querySelectorAll('.size-option');
+            sizeOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    const size = option.getAttribute('data-size');
+                    selectedSize = size;
+                    
+                    // Update selected size
+                    sizeOptions.forEach(o => o.classList.remove('selected'));
+                    option.classList.add('selected');
+                });
+            });
+            
+            // Add event listener for add to cart button
+            const addToCartBtn = document.getElementById('add-to-cart-detail');
+            addToCartBtn.addEventListener('click', () => {
+                if (!selectedSize) {
+                    showNotification('Please select a size');
+                    return;
+                }
+                
+                addToCartWithSize(product.id, selectedSize);
+            });
+            
+            // Add event listener for back button
+            const backBtn = document.getElementById('back-to-products');
+            backBtn.addEventListener('click', () => {
+                showSection(currentSection);
+            });
+        }
+
+        // Add to cart with size
+        function addToCartWithSize(productId, size) {
+            const product = allProducts.find(p => p.id === productId);
+            if (!product) return;
+            
+            const existingItem = cart.find(item => 
+                item.id === productId && item.selectedSize === size
+            );
+            
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push({
+                    ...product,
+                    selectedSize: size,
+                    quantity: 1
+                });
+            }
+            
+            updateCartCount();
+            showNotification(`Added ${product.name} (Size ${size}) to cart!`);
+        }
+
+        // Filter by category
+        function filterByCategory(category) {
+            activeCategory = category;
+            
+            if (category === 'all') {
+                renderProducts(allProducts);
+            } else {
+                const filteredProducts = allProducts.filter(product => product.category === category);
+                renderProducts(filteredProducts);
+            }
+        }
+
+        // Add to cart
+        function addToCart(productId) {
+            const product = allProducts.find(p => p.id === productId);
+            if (!product) return;
+            
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push({
+                    ...product,
+                    quantity: 1
+                });
+            }
+            
+            updateCartCount();
+            showNotification('Item added to cart!');
+        }
+
+        // Update cart count
+        function updateCartCount() {
+            const count = cart.reduce((total, item) => total + item.quantity, 0);
+            cartCount.textContent = count;
+        }
+
+        // Show cart
+        function showCart() {
+            hideAllSections();
+            cartSection.style.display = 'block';
+            renderCart();
+        }
+
+        // Render cart
+        function renderCart() {
+            cartItems.innerHTML = '';
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = `
+                    <div class="empty-cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h3>Your cart is empty</h3>
+                        <p>Add some items to your cart to continue shopping</p>
+                    </div>
+                `;
+                cartTotal.textContent = '$0.00';
+                return;
+            }
+            
+            let total = 0;
+            
+            cart.forEach(item => {
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}">
+                    <div class="cart-item-info">
+                        <div class="cart-item-name">${item.name}</div>
+                        <div class="cart-item-price">$${item.priceUSD} ${item.selectedSize ? `(Size ${item.selectedSize})` : ''}</div>
+                    </div>
+                    <div class="cart-item-quantity">
+                        <button class="decrease-quantity" data-id="${item.id}" data-size="${item.selectedSize || ''}">-</button>
+                        <input type="text" value="${item.quantity}" readonly>
+                        <button class="increase-quantity" data-id="${item.id}" data-size="${item.selectedSize || ''}">+</button>
+                    </div>
+                    <div class="cart-item-remove" data-id="${item.id}" data-size="${item.selectedSize || ''}">
+                        <i class="fas fa-trash-alt"></i>
+                    </div>
+                `;
+                
+                cartItems.appendChild(cartItem);
+                
+                total += item.priceUSD * item.quantity;
+                
+                // Event listeners for cart item buttons
+                const decreaseBtn = cartItem.querySelector('.decrease-quantity');
+                const increaseBtn = cartItem.querySelector('.increase-quantity');
+                const removeBtn = cartItem.querySelector('.cart-item-remove');
+                
+                decreaseBtn.addEventListener('click', () => {
+                    updateQuantity(item.id, item.quantity - 1, item.selectedSize);
+                });
+                
+                increaseBtn.addEventListener('click', () => {
+                    updateQuantity(item.id, item.quantity + 1, item.selectedSize);
+                });
+                
+                removeBtn.addEventListener('click', () => {
+                    removeFromCart(item.id, item.selectedSize);
+                });
+            });
+            
+            cartTotal.textContent = `$${total.toFixed(2)}`;
+        }
+
+        // Update quantity
+        function updateQuantity(productId, newQuantity, size) {
+            if (newQuantity <= 0) {
+                removeFromCart(productId, size);
+                return;
+            }
+            
+            const item = cart.find(item => 
+                item.id === productId && (item.selectedSize === size || (!item.selectedSize && !size))
+            );
+            
+            if (item) {
+                item.quantity = newQuantity;
+                updateCartCount();
+                renderCart();
+            }
+        }
+
+        // Remove from cart
+        function removeFromCart(productId, size) {
+            cart = cart.filter(item => 
+                !(item.id === productId && (item.selectedSize === size || (!item.selectedSize && !size)))
+            );
+            updateCartCount();
+            renderCart();
+        }
+
+        // Show checkout
+        function showCheckout() {
+            if (cart.length === 0) {
+                showNotification('Your cart is empty!');
+                return;
+            }
+            
+            hideAllSections();
+            checkoutSection.style.display = 'block';
+        }
+
+        // Place order
+        function placeOrder(e) {
+            e.preventDefault();
+            
+            // In a real app, you would process the payment here
+            showNotification('Order placed successfully!');
+            
+            // Clear cart
+            cart = [];
+            updateCartCount();
+            
+            // Reset form
+            checkoutForm.reset();
+            
+            // Show home section
+            setTimeout(() => {
+                showSection('home');
+                navLinks.forEach(l => l.classList.remove('active'));
+                document.querySelector('[data-section="home"]').classList.add('active');
+            }, 2000);
+        }
+
+        // Perform search
+        function performSearch() {
+            const searchTerm = searchBar.value.toLowerCase().trim();
+            
+            if (!searchTerm) {
+                renderProducts(allProducts);
+                return;
+            }
+            
+            // Show loading state
+            productGrid.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+            
+            // Simulate API call delay
+            setTimeout(() => {
+                // First search in local products
+                let filteredProducts = allProducts.filter(product => {
+                    const nameMatch = product.name.toLowerCase().includes(searchTerm);
+                    const priceMatch = product.price.toString().includes(searchTerm) || 
+                                      product.priceUSD.toString().includes(searchTerm);
+                    
+                    return nameMatch || priceMatch;
+                });
+                
+                // If no local results, search in external sources
+                if (filteredProducts.length === 0) {
+                    showNotification('Searching external sources...');
+                    
+                    // Simulate fetching from external sources
+                    setTimeout(() => {
+                        let externalResults = [];
+                        
+                        externalSources.forEach(source => {
+                            const results = source.products.filter(product => {
+                                const nameMatch = product.name.toLowerCase().includes(searchTerm);
+                                const priceMatch = product.price.toString().includes(searchTerm) || 
+                                                  product.priceUSD.toString().includes(searchTerm);
+                                
+                                return nameMatch || priceMatch;
+                            });
+                            
+                            externalResults = [...externalResults, ...results];
+                        });
+                        
+                        if (externalResults.length > 0) {
+                            // Add external products to all products
+                            allProducts = [...allProducts, ...externalResults];
+                            filteredProducts = externalResults;
+                            showNotification(`Found ${externalResults.length} products from external sources`);
+                        } else {
+                            showNotification('No products found in any source');
+                        }
+                        
+                        renderProducts(filteredProducts);
+                    }, 1000);
+                } else {
+                    renderProducts(filteredProducts);
+                }
+            }, 500);
+        }
+
+        // Search products (for input event)
+        function searchProducts() {
+            // Debounce the search
+            clearTimeout(window.searchTimeout);
+            window.searchTimeout = setTimeout(performSearch, 300);
+        }
+
+        // Show notification
+        function showNotification(message, type = 'primary') {
+            notification.textContent = message;
+            notification.className = 'notification show';
+            
+            if (type === 'success') {
+                notification.classList.add('success');
+            } else if (type === 'error') {
+                notification.classList.add('error');
+            }
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Show section
+        function showSection(section) {
+            currentSection = section;
+            hideAllSections();
+            
+            if (section === 'home' || section === 'shop') {
+                document.getElementById('home').style.display = 'block';
+                
+                // Update section title based on current section
+                if (section === 'home') {
+                    sectionTitle.textContent = 'Featured Shoes';
+                    // Show category filter on home page
+                    categoryFilter.style.display = 'flex';
+                } else if (section === 'shop') {
+                    sectionTitle.textContent = 'All Shoes';
+                    // Hide category filter on shop page
+                    categoryFilter.style.display = 'none';
+                }
+                
+                // Reset search when navigating to home or shop
+                searchBar.value = '';
+                renderProducts(allProducts);
+            } else if (section === 'cart') {
+                showCart();
+            } else if (section === 'checkout') {
+                showCheckout();
+            } else if (section === 'login') {
+                loginSection.style.display = 'block';
+            } else if (section === 'admin') {
+                adminSection.style.display = 'block';
+                loadAdminDashboard();
+            } else if (section === 'seller') {
+                sellerSection.style.display = 'block';
+                loadSellerDashboard();
+            } else {
+                // For about and contact, we'll show a placeholder with shoes
+                const homeSection = document.getElementById('home');
+                homeSection.style.display = 'block';
+                categoryFilter.style.display = 'none';
+                
+                // Update section title
+                if (section === 'about') {
+                    sectionTitle.textContent = 'About RBM';
+                    productGrid.innerHTML = `
+                        <div style="grid-column: span 3; text-align: center; padding: 40px;">
+                            <h2>About RBM Shoes</h2>
+                            <p style="max-width: 800px; margin: 20px auto; line-height: 1.8;">
+                                RBM Shoes is a premium footwear brand that combines style, comfort, and cultural heritage. 
+                                Founded in 2010, our mission is to create shoes that not only look great but also tell a story. 
+                                Each pair is carefully crafted with attention to detail and quality materials.
+                            </p>
+                            <p style="max-width: 800px; margin: 20px auto; line-height: 1.8;">
+                                Our designs are inspired by diverse cultures from around the world, bringing together traditional 
+                                craftsmanship with modern aesthetics. When you wear RBM shoes, you're not just wearing footwear - 
+                                you're stepping into a rich cultural experience.
+                            </p>
+                            <h3 style="margin-top: 40px;">Our Featured Collection</h3>
+                        </div>
+                    `;
+                    // Add some featured products
+                    const featuredProducts = allProducts.slice(0, 6);
+                    featuredProducts.forEach(product => {
+                        const productCard = document.createElement('div');
+                        productCard.className = 'product-card';
+                        productCard.innerHTML = `
+                            <div class="product-img">
+                                <img src="${product.image}" alt="${product.name}">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">${product.name}</h3>
+                                <div class="product-price">
+                                    <span class="price">KES ${product.price.toLocaleString()}</span>
+                                    <span class="price-usd">($${product.priceUSD})</span>
+                                </div>
+                                <button class="view-details" data-id="${product.id}">View Details</button>
+                            </div>
+                        `;
+                        
+                        productGrid.appendChild(productCard);
+                        
+                        // View details button event
+                        const viewDetailsBtn = productCard.querySelector('.view-details');
+                        viewDetailsBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            showProductDetail(product.id);
+                        });
+                        
+                        // Make entire card clickable
+                        productCard.addEventListener('click', () => {
+                            showProductDetail(product.id);
+                        });
+                    });
+                } else if (section === 'contact') {
+                    sectionTitle.textContent = 'Contact Us';
+                    productGrid.innerHTML = `
+                        <div style="grid-column: span 3; text-align: center; padding: 40px;">
+                            <h2>Get in Touch</h2>
+                            <p style="max-width: 800px; margin: 20px auto; line-height: 1.8;">
+                                We'd love to hear from you! Whether you have a question about our products, 
+                                need assistance with an order, or just want to share your feedback, 
+                                our team is here to help.
+                            </p>
+                            <div style="max-width: 600px; margin: 30px auto; text-align: left;">
+                                <div style="margin-bottom: 20px;">
+                                    <h3>Headquarters</h3>
+                                    <p>123 Culture Street, Nairobi, Kenya</p>
+                                </div>
+                                <div style="margin-bottom: 20px;">
+                                    <h3>Contact Info</h3>
+                                    <p>Phone: +254 712 345 678</p>
+                                    <p>Email: info@rbmshoes.com</p>
+                                </div>
+                                <div>
+                                    <h3>Business Hours</h3>
+                                    <p>Monday - Friday: 9am - 6pm</p>
+                                    <p>Saturday: 10am - 4pm</p>
+                                    <p>Sunday: Closed</p>
+                                </div>
+                            </div>
+                            <h3 style="margin-top: 40px;">Popular Picks</h3>
+                        </div>
+                    `;
+                    // Add some popular products
+                    const popularProducts = allProducts.slice(6, 12);
+                    popularProducts.forEach(product => {
+                        const productCard = document.createElement('div');
+                        productCard.className = 'product-card';
+                        productCard.innerHTML = `
+                            <div class="product-img">
+                                <img src="${product.image}" alt="${product.name}">
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">${product.name}</h3>
+                                <div class="product-price">
+                                    <span class="price">KES ${product.price.toLocaleString()}</span>
+                                    <span class="price-usd">($${product.priceUSD})</span>
+                                </div>
+                                <button class="view-details" data-id="${product.id}">View Details</button>
+                            </div>
+                        `;
+                        
+                        productGrid.appendChild(productCard);
+                        
+                        // View details button event
+                        const viewDetailsBtn = productCard.querySelector('.view-details');
+                        viewDetailsBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            showProductDetail(product.id);
+                        });
+                        
+                        // Make entire card clickable
+                        productCard.addEventListener('click', () => {
+                            showProductDetail(product.id);
+                        });
+                    });
+                }
+            }
+        }
+
+        // Hide all sections
+        function hideAllSections() {
+            document.getElementById('home').style.display = 'none';
+            cartSection.style.display = 'none';
+            checkoutSection.style.display = 'none';
+            productDetail.style.display = 'none';
+            loginSection.style.display = 'none';
+            adminSection.style.display = 'none';
+            sellerSection.style.display = 'none';
+        }
+
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
